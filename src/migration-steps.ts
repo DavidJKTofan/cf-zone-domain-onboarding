@@ -62,7 +62,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 		id: 'configure-dns',
 		title: 'Create DNS Records and Configuration',
 		description:
-			'Add all DNS records (A, AAAA, CNAME) and apply configurations (WAF, Rules, Page Rules, caching, Logpush).',
+			'Add all DNS records (A, AAAA, CNAME) manually or by importing BIND zone files. Apply configurations (WAF, Rules, Page Rules, caching, Logpush).',
 		checkpoints: [
 			{ id: 'dns-imported', label: 'DNS records created in Cloudflare', completed: false, optional: false },
 			{ id: 'waf-configured', label: 'WAF rules configured', completed: false, optional: true },
@@ -71,6 +71,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 		],
 		documentation: [
 			'https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/',
+			'https://developers.cloudflare.com/dns/manage-dns-records/how-to/import-and-export/',
 			'https://developers.cloudflare.com/dns/proxy-status/',
 			'https://developers.cloudflare.com/waf/',
 		],
@@ -142,9 +143,9 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 		id: 'convert-full',
 		title: 'Convert to Full Setup',
 		description:
-			'Convert your zone from Partial to Full Setup. Cloudflare will become your authoritative DNS provider. Keep all DNS records as DNS-only (gray cloud) initially to ensure a smooth transition.',
+			'Convert your zone from Partial to Full Setup. Cloudflare will become your authoritative DNS provider. Optionally keep all DNS records as DNS-only (gray cloud) initially to ensure a smooth transition.',
 		checkpoints: [
-			{ id: 'records-unproxied', label: 'All DNS records set to DNS-only (gray cloud)', completed: false, optional: false },
+			{ id: 'records-unproxied', label: 'All DNS records set to DNS-only (gray cloud)', completed: false, optional: true },
 			{ id: 'zone-converted-full', label: 'Zone converted to Full Setup in dashboard', completed: false, optional: false },
 			{ id: 'nameservers-noted', label: 'Assigned Cloudflare nameservers noted (two NS records)', completed: false, optional: false },
 		],
@@ -171,7 +172,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 		id: 'change-nameservers',
 		title: 'Update Nameservers at Registrar',
 		description:
-			'Change nameservers at your domain registrar to the assigned Cloudflare nameservers. Ensure all DNS records are in place. Note: While records are DNS-only (gray cloud), TLS certificates from Cloudflare will not apply to traffic.',
+			'Change nameservers at your domain registrar to the assigned Cloudflare nameservers. Ensure all DNS records are in place. Note: If you optionally kept records as DNS-only (gray cloud), TLS certificates from Cloudflare will not apply to traffic until proxy is enabled.',
 		checkpoints: [
 			{ id: 'dns-records-verified', label: 'All DNS records verified and in place', completed: false, optional: false },
 			{ id: 'nameservers-updated', label: 'Cloudflare nameservers added at registrar', completed: false, optional: false },
