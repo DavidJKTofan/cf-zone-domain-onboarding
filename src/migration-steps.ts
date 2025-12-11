@@ -46,7 +46,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 		id: 'configure-ssl',
 		title: 'Prepare SSL/TLS Certificates',
 		description:
-			'Order an Advanced Certificate with TXT validation method, or upload a custom certificate. This ensures SSL/TLS is ready before DNS migration. Universal SSL can take 15+ minutes to issue and only covers first-level subdomains.',
+			'Order an Advanced Certificate with TXT validation method, or upload a custom certificate. This ensures SSL/TLS is ready before DNS migration. It can take approximately 15 minutes to issue the certificates.',
 		checkpoints: [
 			{ id: 'cert-ordered', label: 'Advanced Certificate ordered (or custom certificate uploaded)', completed: false, optional: false },
 			{ id: 'txt-validation-added', label: 'DCV TXT validation record added to authoritative DNS', completed: false, optional: false },
@@ -62,11 +62,11 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 		id: 'configure-dns',
 		title: 'Create DNS Records and Configuration',
 		description:
-			'Add all DNS records (A, AAAA, CNAME) manually or by importing BIND zone files. Apply configurations (WAF, Rules, Page Rules, caching, Logpush).',
+			'Add all DNS records (A, AAAA, CNAME) manually or by importing BIND zone files. Apply configurations (WAF, Rules, caching, ...).',
 		checkpoints: [
 			{ id: 'dns-imported', label: 'DNS records created in Cloudflare', completed: false, optional: false },
 			{ id: 'waf-configured', label: 'WAF rules configured', completed: false, optional: true },
-			{ id: 'rules-configured', label: 'Page Rules / Rules configured', completed: false, optional: true },
+			{ id: 'rules-configured', label: 'Rules configured', completed: false, optional: true },
 			{ id: 'cache-configured', label: 'Cache configuration reviewed', completed: false, optional: true },
 		],
 		documentation: [
@@ -74,18 +74,18 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/dns/manage-dns-records/how-to/import-and-export/',
 			'https://developers.cloudflare.com/dns/proxy-status/',
 			'https://developers.cloudflare.com/waf/',
+            'https://developers.cloudflare.com/rules/',
 		],
 	},
 	{
 		id: 'protect-origin',
 		title: 'Protect Your Origin Server',
 		description:
-			'Configure your origin server to only accept traffic from Cloudflare. This prevents attackers from bypassing Cloudflare protections by connecting directly to your origin IP.',
+			'Configure your origin server to accept traffic from Cloudflare.',
 		checkpoints: [
-			{ id: 'cf-ips-allowlisted', label: 'Cloudflare IP addresses allowlisted at origin firewall', completed: false, optional: false },
-			{ id: 'non-cf-blocked', label: 'Non-Cloudflare traffic blocked at origin (optional but recommended)', completed: false, optional: true },
-			{ id: 'authenticated-origin-pulls', label: 'Authenticated Origin Pulls configured (mTLS)', completed: false, optional: true },
-			{ id: 'cloudflare-tunnel', label: 'Cloudflare Tunnel considered for private origin', completed: false, optional: true },
+			{ id: 'cf-ips-allowlisted', label: 'Cloudflare IP addresses allowlisted at origin firewall', completed: false, optional: true },
+			{ id: 'authenticated-origin-pulls', label: 'Authenticated Origin Pulls (mTLS) reviewed', completed: false, optional: true },
+			{ id: 'cloudflare-tunnel', label: 'Cloudflare Tunnel reviewed', completed: false, optional: true },
 		],
 		documentation: [
 			'https://developers.cloudflare.com/fundamentals/security/protect-your-origin-server/',
