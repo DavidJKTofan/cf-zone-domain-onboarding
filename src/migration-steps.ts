@@ -19,6 +19,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/fundamentals/manage-domains/add-site/',
 			'https://developers.cloudflare.com/dns/zone-setups/partial-setup/',
 		],
+		images: ['img/step-1-add-zone.png'],
 	},
 	{
 		id: 'convert-partial',
@@ -30,6 +31,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			{ id: 'txt-record-noted', label: 'Verification TXT record details saved', completed: false, optional: false },
 		],
 		documentation: ['https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#1-convert-your-zone-and-review-dns-records'],
+		images: ['img/step-2-convert-partial.png'],
 	},
 	{
 		id: 'verify-ownership',
@@ -41,6 +43,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			{ id: 'verification-confirmed', label: 'Cloudflare confirmed domain ownership via email', completed: false, optional: false },
 		],
 		documentation: ['https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#2-verify-ownership-for-your-domain'],
+		images: ['img/step-3-verify-ownership.png'],
 	},
 	{
 		id: 'configure-ssl',
@@ -57,6 +60,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/ssl/edge-certificates/changing-dcv-method/methods/txt/',
 			'https://developers.cloudflare.com/ssl/edge-certificates/custom-certificates/uploading/',
 		],
+		images: ['img/step-4-configure-ssl.png'],
 	},
 	{
 		id: 'configure-dns',
@@ -76,6 +80,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/waf/',
             'https://developers.cloudflare.com/rules/',
 		],
+		images: ['img/step-5-configure-dns.png'],
 	},
 	{
 		id: 'protect-origin',
@@ -93,6 +98,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/',
 			'https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/',
 		],
+		images: ['img/step-6-protect-origin.png'],
 	},
 	{
 		id: 'local-testing',
@@ -111,6 +117,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/cache/concepts/cache-responses/',
 			'https://developers.cloudflare.com/ssl/reference/certificate-statuses/',
 		],
+		images: ['img/step-7-local-testing.png'],
 	},
 	{
 		id: 'iterate-config',
@@ -122,6 +129,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			{ id: 'all-tests-passed', label: 'All functionality validated in test environment', completed: false, optional: false },
 		],
 		documentation: ['https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/'],
+		images: ['img/step-8-iterate-config.png'],
 	},
 	{
 		id: 'handle-dnssec',
@@ -138,6 +146,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/dns/dnssec/dnssec-active-migration/',
 			'https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/',
 		],
+		images: ['img/step-9-handle-dnssec.png'],
 	},
 	{
 		id: 'convert-full',
@@ -153,6 +162,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/dns/zone-setups/conversions/convert-partial-to-full/',
 			'https://developers.cloudflare.com/dns/zone-setups/full-setup/',
 		],
+		images: ['img/step-10-convert-full.png'],
 	},
 	{
 		id: 'lower-ttl',
@@ -167,6 +177,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/',
 			'https://www.cloudflare.com/learning/cdn/glossary/time-to-live-ttl/',
 		],
+		images: ['img/step-11-lower-ttl.png'],
 	},
 	{
 		id: 'change-nameservers',
@@ -183,6 +194,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/dns/nameservers/update-nameservers/',
 			'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/',
 		],
+		images: ['img/step-12-change-nameservers.png'],
 	},
 	{
 		id: 'enable-proxy',
@@ -201,5 +213,25 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
 			'https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/',
 			'https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/',
 		],
+		images: ['img/step-13-enable-proxy.png'],
+	},
+	{
+		id: 'iac-cicd',
+		title: 'Infrastructure as Code & CI/CD Pipelines',
+		description:
+			'Automate your Cloudflare configuration using Infrastructure as Code (IaC) with Terraform. Use cf-terraforming to export existing configuration and integrate with CI/CD pipelines for version control and automated deployments.',
+		checkpoints: [
+			{ id: 'terraform-reviewed', label: 'Cloudflare Terraform provider reviewed', completed: false, optional: true },
+			{ id: 'cf-terraforming-used', label: 'cf-terraforming used to export current configuration', completed: false, optional: true },
+			{ id: 'terraform-config-created', label: 'Terraform configuration files created', completed: false, optional: true },
+			{ id: 'cicd-pipeline-setup', label: 'CI/CD pipeline configured for automated deployments', completed: false, optional: true },
+		],
+		documentation: [
+			'https://developers.cloudflare.com/terraform/',
+			'https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs',
+			'https://github.com/cloudflare/cf-terraforming',
+			'https://developers.cloudflare.com/workers/ci-cd/',
+		],
+		images: ['img/step-14-iac-cicd.png'],
 	},
 ];
