@@ -81,6 +81,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/rules/',
         ],
         images: ['img/step-5-configure-dns.png'],
+        dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records',
     },
     {
         id: 'protect-origin',

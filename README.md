@@ -60,9 +60,24 @@ Each step includes required/optional checkpoints, descriptions, and links to off
 - [Convert Partial to Full Setup](https://developers.cloudflare.com/dns/zone-setups/conversions/convert-partial-to-full/)
 - [Minimize Downtime](https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/)
 
+## Image Guidelines
+
+- **Format**: PNG or JPEG
+- **Size**: Recommended width 800-1200px
+- **Content**: Clear screenshots from Cloudflare dashboard or relevant configuration screens
+- **Quality**: High resolution, clearly readable text
+- **Annotations**: Add arrows, highlights, or text to draw attention to important elements
+
+The frontend will automatically display these images if they exist, or show a placeholder if missing.
+
 ## Customization
 
 Edit `src/migration-steps.ts` to add, modify, or remove migration steps. The modular structure makes it easy to create custom workflows for different use cases.
+
+**Dashboard Deep Links:** Add the optional `dashboardLink` field to any step to display a prominent button that links directly to the relevant Cloudflare Dashboard page. Example:
+```typescript
+dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records'
+```
 
 Edit `public/scripts.js` to exclude steps from progress bar progression that only have optional checkpoints, like Step 6 and 14.
 

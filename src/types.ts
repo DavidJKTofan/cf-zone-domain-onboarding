@@ -25,6 +25,7 @@ export interface MigrationStep {
 	checkpoints: Checkpoint[];
 	documentation: string[];
 	images?: string[];
+	dashboardLink?: string;
 }
 
 export interface ZoneInfo {

@@ -669,6 +669,42 @@ main {
     line-height: 1.6;
 }
 
+/* Dashboard Link */
+.dashboard-link-container {
+    margin: 24px 0;
+    padding: 20px;
+    background: linear-gradient(135deg, #f6f8fa 0%, #ffffff 100%);
+    border: 2px solid var(--cf-orange);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.btn-dashboard {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: var(--cf-orange);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    transition: all var(--transition);
+    box-shadow: 0 2px 8px rgba(245, 130, 32, 0.2);
+}
+
+.btn-dashboard:hover {
+    background: #e07820;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(245, 130, 32, 0.3);
+}
+
+.btn-dashboard svg {
+    flex-shrink: 0;
+}
+
 /* Step Actions */
 .step-actions {
     display: flex;

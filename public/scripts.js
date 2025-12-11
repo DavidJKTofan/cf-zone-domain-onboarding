@@ -204,6 +204,20 @@ dig +short yourdomain.com.cdn.cloudflare.net
             </div>
         ` : '';
 
+        const dashboardLinkHtml = step.dashboardLink ? `
+            <div class="dashboard-link-container">
+                <a href="${step.dashboardLink}" target="_blank" rel="noopener" class="btn-dashboard">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                    Open in Cloudflare Dashboard
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                </a>
+            </div>
+        ` : '';
+
         const requiredCount = step.checkpoints.filter((cp) => !cp.optional).length;
         const completedRequired = step.checkpoints.filter((cp) => !cp.optional && cp.completed).length;
 
@@ -217,6 +231,7 @@ dig +short yourdomain.com.cdn.cloudflare.net
             ${warningHtml}
             ${commandExample}
             ${imagesHtml}
+            ${dashboardLinkHtml}
 
             <div class="checkpoints">
                 <div class="checkpoints-header">
