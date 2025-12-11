@@ -347,11 +347,19 @@ dig +short yourdomain.com.cdn.cloudflare.net
     }
 
     updateProgress() {
-        const totalSteps = this.steps.length;
-        const completedSteps = this.steps.filter((_, index) => this.isStepCompleted(index)).length;
-        const percentage = Math.round((completedSteps / totalSteps) * 100);
+        // Exclude steps that only have optional checkpoints (Step 6 and 14)
+        const optionalOnlyStepIds = ['protect-origin', 'iac-cicd'];
+        
+        const requiredSteps = this.steps.filter(step => !optionalOnlyStepIds.includes(step.id));
+        const totalSteps = requiredSteps.length;
+        
+        const completedSteps = this.steps.filter((step, index) => {
+            return !optionalOnlyStepIds.includes(step.id) && this.isStepCompleted(index);
+        }).length;
+        
+        const percentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
 
-        document.getElementById('progress-text').textContent = `Step ${this.currentStepIndex + 1} of ${totalSteps}`;
+        document.getElementById('progress-text').textContent = `Step ${this.currentStepIndex + 1} of ${this.steps.length}`;
         document.getElementById('progress-percentage').textContent = `${percentage}%`;
         document.getElementById('progress-fill').style.width = `${percentage}%`;
     }

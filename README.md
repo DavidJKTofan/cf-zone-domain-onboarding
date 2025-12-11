@@ -64,6 +64,8 @@ Each step includes required/optional checkpoints, descriptions, and links to off
 
 Edit `src/migration-steps.ts` to add, modify, or remove migration steps. The modular structure makes it easy to create custom workflows for different use cases.
 
+Edit `public/scripts.js` to exclude steps that only have optional checkpoints, like Step 6 and 14.
+
 # Disclaimer
 
 This tool is provided for educational and informational purposes only. 
