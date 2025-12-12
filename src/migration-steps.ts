@@ -104,7 +104,6 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/',
             'https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/'
         ],
-        images: ['img/step-6-protect-origin.png'],
     },
     {
         id: 'local-testing',
@@ -212,15 +211,16 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'After DNS propagation is complete and the zone is Active, enable proxied status on DNS records to route traffic through Cloudflare. This activates CDN, WAF, DDoS protection, and other security features.',
         checkpoints: [
             { id: 'cert-revalidated', label: 'SSL/TLS certificate is Active for all hostnames', completed: false, optional: false },
-            { id: 'origin-ips-allowed', label: 'Cloudflare IPs allowlisted at origin firewall', completed: false, optional: false },
+            { id: 'origin-ips-allowed', label: 'Cloudflare IPs are not blocked or optimally allowlisted at origin firewall', completed: false, optional: true },
             { id: 'proxy-enabled', label: 'Proxy status enabled (orange cloud) on DNS records', completed: false, optional: false },
             { id: 'traffic-flowing', label: 'Traffic flowing through Cloudflare (cf-ray header present)', completed: false, optional: false },
-            { id: 'hosts-cleanup', label: '/etc/hosts test entries removed', completed: false, optional: true },
+            { id: 'hosts-cleanup', label: '/etc/hosts test entries removed', completed: false, optional: false },
         ],
         documentation: [
             'https://developers.cloudflare.com/dns/proxy-status/',
             'https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/',
             'https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/',
+            'https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray',
         ],
         images: ['img/step-13-enable-proxy.png'],
     },
