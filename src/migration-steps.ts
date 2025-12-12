@@ -20,6 +20,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/zone-setups/partial-setup/',
         ],
         images: ['img/step-1-add-zone.png'],
+        dashboardLink: 'https://dash.cloudflare.com/?to=/:account/add-site',
     },
     {
         id: 'convert-partial',
@@ -32,6 +33,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         documentation: ['https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#1-convert-your-zone-and-review-dns-records'],
         images: ['img/step-2-convert-partial.png'],
+        dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/settings/convert-zone',
     },
     {
         id: 'verify-ownership',
@@ -61,6 +63,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/ssl/edge-certificates/custom-certificates/uploading/',
         ],
         images: ['img/step-4-configure-ssl.png'],
+        dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/ssl-tls/edge-certificates',
     },
     {
         id: 'configure-dns',
@@ -78,6 +81,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/manage-dns-records/how-to/import-and-export/',
             'https://developers.cloudflare.com/dns/proxy-status/',
             'https://developers.cloudflare.com/waf/',
+            'https://developers.cloudflare.com/cache/',
             'https://developers.cloudflare.com/rules/',
         ],
         images: ['img/step-5-configure-dns.png'],
@@ -134,6 +138,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/',
             'https://developers.cloudflare.com/resources/?filter-pcx_content_type=learning-path&filter-pcx_content_type=tutorial&filter-pcx_content_type=video'
         ],
+        images: ['img/step-8-iterate-config.png'],
+        dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/security/settings',
     },
     {
         id: 'handle-dnssec',
@@ -167,6 +173,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/proxy-status/'
         ],
         images: ['img/step-10-convert-full.png'],
+        dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/settings',
     },
     {
         id: 'lower-ttl',
@@ -181,7 +188,6 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/',
             'https://www.cloudflare.com/learning/cdn/glossary/time-to-live-ttl/',
         ],
-        images: ['img/step-11-lower-ttl.png'],
     },
     {
         id: 'change-nameservers',
@@ -198,7 +204,6 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/nameservers/update-nameservers/',
             'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/',
         ],
-        images: ['img/step-12-change-nameservers.png'],
     },
     {
         id: 'enable-proxy',
@@ -236,6 +241,5 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://github.com/cloudflare/cf-terraforming',
             'https://developers.cloudflare.com/workers/ci-cd/',
         ],
-        images: ['img/step-14-iac-cicd.png'],
     },
 ];
