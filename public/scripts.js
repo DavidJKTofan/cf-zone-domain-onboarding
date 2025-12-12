@@ -114,7 +114,15 @@ class MigrationGuide {
         }
 
         let warningHtml = '';
-        if (this.currentStepIndex === 8) {
+        if (this.currentStepIndex === 6) {
+            warningHtml = `
+                <div class="alert alert-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <div><strong>Prerequisites:</strong> Your CNAME Setup zone must be in Active status (TXT verification completed in Step 3) before the dig command will return Cloudflare Anycast IPs. If the zone is not active, dig will not resolve the .cdn.cloudflare.net hostname.</div>
+                </div>
+            `;
+        } else if (this.currentStepIndex === 8) {
             warningHtml = `
                 <div class="alert alert-warning">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -132,10 +140,29 @@ class MigrationGuide {
                     <div><strong>Important:</strong> Ensure all DNS records are in place before changing nameservers. While records remain DNS-only (gray cloud), Cloudflare TLS certificates will not apply to traffic - your origin must handle TLS directly.</div>
                 </div>
             `;
+        } else if (this.currentStepIndex === 12) {
+            warningHtml = `
+                <div class="alert alert-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div><strong>Critical:</strong> Before enabling proxy status, ensure your origin firewall allows Cloudflare IP addresses. Blocking Cloudflare IPs will cause downtime when you enable the orange cloud. Review the IP ranges in the documentation.</div>
+                </div>
+            `;
         }
 
         let commandExample = '';
-        if (this.currentStepIndex === 6) {
+        if (this.currentStepIndex === 2) {
+            commandExample = `
+                <div class="command-block">
+                    <code># Verify TXT record has been set at your authoritative DNS provider
+dig TXT +short cloudflare-verify.yourdomain.com
+
+# Expected output: the verification token provided by Cloudflare
+# Example: "723047471-2..."</code>
+                </div>
+            `;
+        } else if (this.currentStepIndex === 6) {
             commandExample = `
                 <div class="command-block">
                     <code># Retrieve Cloudflare Anycast IPs for your domain

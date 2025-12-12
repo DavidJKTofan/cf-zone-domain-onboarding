@@ -16,6 +16,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'plan-selected', label: 'Business or Enterprise plan selected (required for Partial Setup)', completed: false, optional: false },
         ],
         documentation: [
+            'https://developers.cloudflare.com/fundamentals/account/create-account/',
             'https://developers.cloudflare.com/fundamentals/manage-domains/add-site/',
             'https://developers.cloudflare.com/dns/zone-setups/partial-setup/',
         ],
@@ -44,7 +45,10 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'txt-added', label: 'Verification TXT record added at authoritative DNS', completed: false, optional: false },
             { id: 'verification-confirmed', label: 'Cloudflare confirmed domain ownership via email', completed: false, optional: false },
         ],
-        documentation: ['https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#2-verify-ownership-for-your-domain'],
+        documentation: [
+            'https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#2-verify-ownership-for-your-domain',
+            'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/'
+        ],
         images: ['img/step-3-verify-ownership.png'],
     },
     {
@@ -109,8 +113,9 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'local-testing',
         title: 'Test via /etc/hosts Override',
         description:
-            'Test your Cloudflare configuration locally by overriding DNS with /etc/hosts entries pointing to Cloudflare Anycast IPs. Use dig to retrieve the IPs assigned to your proxied hostname.',
+            'Test your Cloudflare configuration locally by overriding DNS with /etc/hosts entries pointing to Cloudflare Anycast IPs. Note: Your CNAME Setup zone must be in Active status (TXT verification completed) before you can retrieve the assigned Cloudflare IPs via dig.',
         checkpoints: [
+            { id: 'zone-active-verified', label: 'Zone status is Active (TXT verification completed)', completed: false, optional: false },
             { id: 'cf-ips-retrieved', label: 'Cloudflare Anycast IPs retrieved (dig yourdomain.com.cdn.cloudflare.net)', completed: false, optional: false },
             { id: 'hosts-updated', label: '/etc/hosts file updated with Cloudflare IPs', completed: false, optional: false },
             { id: 'ssl-validated', label: 'SSL/TLS certificate validated locally (check certificate chain)', completed: false, optional: false },
@@ -121,8 +126,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/concepts/how-cloudflare-works/',
             'https://developers.cloudflare.com/cache/concepts/cache-responses/',
             'https://developers.cloudflare.com/ssl/reference/certificate-statuses/',
+            'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/'
         ],
-
     },
     {
         id: 'iterate-config',
