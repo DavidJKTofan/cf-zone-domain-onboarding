@@ -166,8 +166,14 @@ dig TXT +short cloudflare-verify.yourdomain.com
         } else if (this.currentStepIndex === 6) {
             commandExample = `
                 <div class="command-block">
-                    <code># Retrieve Cloudflare Anycast IPs for your domain
+                    <code># Important: DNS record must exist in your Cloudflare zone for this to work
+# Retrieve Cloudflare Anycast IPs for your proxied hostname
 dig +short yourdomain.com.cdn.cloudflare.net
+
+# The .cdn.cloudflare.net suffix only returns IPs if:
+# 1. Zone is Active (TXT verification completed)
+# 2. DNS record exists in Cloudflare
+# 3. Record has proxy enabled (orange cloud)
 
 # Example: Add to /etc/hosts (macOS/Linux)
 104.21.XX.XXX yourdomain.com
