@@ -47,6 +47,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         documentation: [
             'https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#2-verify-ownership-for-your-domain',
+            'https://developers.cloudflare.com/fundamentals/user-profiles/verify-email-address/',
             'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/'
         ],
         images: ['img/step-3-verify-ownership.png'],
@@ -119,7 +120,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'cf-ips-retrieved', label: 'Cloudflare Anycast IPs retrieved (dig yourdomain.com.cdn.cloudflare.net)', completed: false, optional: false },
             { id: 'hosts-updated', label: '/etc/hosts file updated with Cloudflare IPs', completed: false, optional: false },
             { id: 'ssl-validated', label: 'SSL/TLS certificate validated locally (check certificate chain)', completed: false, optional: false },
-            { id: 'cache-tested', label: 'Cache behavior tested (cf-cache-status header)', completed: false, optional: false },
+            { id: 'cache-tested', label: 'Cache behavior tested (cf-cache-status header)', completed: false, optional: true },
             { id: 'rules-tested', label: 'WAF, Rules, and redirects validated', completed: false, optional: true },
         ],
         documentation: [
@@ -215,11 +216,11 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         description:
             'After DNS propagation is complete and the zone is Active, enable proxied status on DNS records to route traffic through Cloudflare. This activates CDN, WAF, DDoS protection, and other security features.',
         checkpoints: [
+            { id: 'hosts-cleanup', label: '/etc/hosts test entries removed', completed: false, optional: false },
             { id: 'cert-revalidated', label: 'SSL/TLS certificate is Active for all hostnames', completed: false, optional: false },
             { id: 'origin-ips-allowed', label: 'Cloudflare IPs are not blocked or optimally allowlisted at origin firewall', completed: false, optional: true },
             { id: 'proxy-enabled', label: 'Proxy status enabled (orange cloud) on DNS records', completed: false, optional: false },
             { id: 'traffic-flowing', label: 'Traffic flowing through Cloudflare (cf-ray header present)', completed: false, optional: false },
-            { id: 'hosts-cleanup', label: '/etc/hosts test entries removed', completed: false, optional: false },
         ],
         documentation: [
             'https://developers.cloudflare.com/dns/proxy-status/',
