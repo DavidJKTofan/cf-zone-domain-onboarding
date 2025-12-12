@@ -66,6 +66,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/ssl/edge-certificates/advanced-certificate-manager/manage-certificates/',
             'https://developers.cloudflare.com/ssl/edge-certificates/changing-dcv-method/methods/txt/',
             'https://developers.cloudflare.com/ssl/edge-certificates/custom-certificates/uploading/',
+            'https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/',
         ],
         images: ['img/step-4-configure-ssl.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/ssl-tls/edge-certificates',
