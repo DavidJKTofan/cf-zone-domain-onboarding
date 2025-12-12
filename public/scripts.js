@@ -114,7 +114,16 @@ class MigrationGuide {
         }
 
         let warningHtml = '';
-        if (this.currentStepIndex === 6) {
+        if (this.currentStepIndex === 1) {
+            warningHtml = `
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Zero Downtime:</strong> Converting to Partial (CNAME) Setup does not impact your live traffic. Your domain continues to operate normally through your existing DNS provider while you configure and test Cloudflare. Traffic only routes through Cloudflare when you explicitly enable it.</div>
+                </div>
+            `;
+        } else if (this.currentStepIndex === 6) {
             warningHtml = `
                 <div class="alert alert-warning">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
