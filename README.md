@@ -56,9 +56,10 @@ Each step includes required/optional checkpoints, descriptions, and links to off
 
 ## Key Resources
 
+- [Minimize Downtime](https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/)
 - [Partial (CNAME) Setup](https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/)
 - [Convert Partial to Full Setup](https://developers.cloudflare.com/dns/zone-setups/conversions/convert-partial-to-full/)
-- [Minimize Downtime](https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/)
+- [Securely deliver applications with Cloudflare](https://developers.cloudflare.com/reference-architecture/design-guides/secure-application-delivery/)
 
 ## Image Guidelines
 
@@ -72,14 +73,14 @@ The frontend will automatically display these images if they exist, or show a pl
 
 ## Customization
 
-Edit `src/migration-steps.ts` to add, modify, or remove migration steps. The modular structure makes it easy to create custom workflows for different use cases.
+**Migration Steps:** Edit `src/migration-steps.ts` to add, modify, or remove migration steps. The modular structure makes it easy to create custom workflows for different use cases.
 
 **Dashboard Deep Links:** Add the optional `dashboardLink` field to any step to display a prominent button that links directly to the relevant Cloudflare Dashboard page. Example:
 ```typescript
 dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records'
 ```
 
-Edit `public/scripts.js` to exclude steps from progress bar progression that only have optional checkpoints, like Step 6 and 14.
+**Progress Bar:** Edit `public/scripts.js` to exclude steps from progress bar progression that only have optional checkpoints, like Step 6 and 14.
 
 # Disclaimer
 
