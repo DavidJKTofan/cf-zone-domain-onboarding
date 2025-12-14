@@ -11,7 +11,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         title: 'Migration Preparation & Rollback Strategy',
         description:
             'Before starting the migration, prepare your rollback strategy, backup DNS records, plan monitoring, and communicate with stakeholders. Keep legacy DNS active for 7-14 days post-cutover to facilitate potential rollback.',
-        estimatedTime: '30-60 minutes',
+        estimatedTime: '30 minutes - 2 hours',
         checkpoints: [
             { id: 'dns-backup-created', label: 'All DNS records exported and backed up from current provider', completed: false, optional: false },
             { id: 'rollback-plan', label: 'Rollback procedure documented (revert nameservers to original)', completed: false, optional: false },
@@ -24,6 +24,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/',
             'https://developers.cloudflare.com/terraform/tutorial/revert-configuration/',
         ],
+        phase: 0,
+        phaseTitle: 'Preparation',
     },
     {
         id: 'add-zone',
@@ -42,6 +44,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         images: ['img/step-1-add-zone.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/add-site',
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'convert-partial',
@@ -56,6 +60,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         documentation: ['https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#1-convert-your-zone-and-review-dns-records'],
         images: ['img/step-2-convert-partial.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/settings/convert-zone',
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'verify-ownership',
@@ -73,6 +79,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/'
         ],
         images: ['img/step-3-verify-ownership.png'],
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'configure-ssl',
@@ -94,6 +102,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         images: ['img/step-4-configure-ssl.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/ssl-tls/edge-certificates',
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'configure-dns',
@@ -117,6 +127,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         images: ['img/step-5-configure-dns.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records',
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'protect-origin',
@@ -136,6 +148,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/',
             'https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/'
         ],
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'local-testing',
@@ -157,6 +171,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/ssl/reference/certificate-statuses/',
             'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/'
         ],
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'iterate-config',
@@ -174,6 +190,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         images: ['img/step-8-iterate-config.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/security/settings',
+        phase: 1,
+        phaseTitle: 'Partial Setup (Testing)',
     },
     {
         id: 'handle-dnssec',
@@ -191,13 +209,15 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/dnssec/dnssec-active-migration/',
             'https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/',
         ],
+        phase: 2,
+        phaseTitle: 'Full Setup Migration (Live)',
     },
     {
         id: 'convert-full',
         title: 'Convert to Full Setup',
         description:
             'Convert your zone from Partial to Full Setup. Cloudflare will become your authoritative DNS provider. After conversion, add remaining DNS record types that were not available during Partial Setup: MX records (email), TXT records (SPF, DKIM, DMARC, domain verification), SRV records (services), and any other required records. Optionally keep all DNS records as DNS-only (gray cloud) initially to ensure a smooth transition.',
-        estimatedTime: '5 minutes',
+        estimatedTime: '5-10 minutes',
         checkpoints: [
             { id: 'zone-converted-full', label: 'Zone converted to Full Setup in dashboard', completed: false, optional: false },
             { id: 'nameservers-noted', label: 'Assigned Cloudflare nameservers noted (two NS records)', completed: false, optional: false },
@@ -211,6 +231,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         images: ['img/step-10-convert-full.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/settings',
+        phase: 2,
+        phaseTitle: 'Full Setup Migration (Live)',
     },
     {
         id: 'lower-ttl',
@@ -226,6 +248,8 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/zone-setups/full-setup/setup/',
             'https://www.cloudflare.com/learning/cdn/glossary/time-to-live-ttl/',
         ],
+        phase: 2,
+        phaseTitle: 'Full Setup Migration (Live)',
     },
     {
         id: 'change-nameservers',
@@ -242,7 +266,10 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         documentation: [
             'https://developers.cloudflare.com/dns/nameservers/update-nameservers/',
             'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/',
+            'https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/',
         ],
+        phase: 2,
+        phaseTitle: 'Full Setup Migration (Live)',
     },
     {
         id: 'enable-proxy',
@@ -264,6 +291,9 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray',
         ],
         images: ['img/step-13-enable-proxy.png'],
+        dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns',
+        phase: 3,
+        phaseTitle: 'Enable Proxy & Automation',
     },
     {
         id: 'iac-cicd',
@@ -283,5 +313,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://github.com/cloudflare/cf-terraforming',
             'https://developers.cloudflare.com/workers/ci-cd/',
         ],
+        phase: 3,
+        phaseTitle: 'Enable Proxy & Automation',
     },
 ];

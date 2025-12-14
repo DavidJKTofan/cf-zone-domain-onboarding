@@ -27,6 +27,8 @@ export interface MigrationStep {
 	images?: string[];
 	dashboardLink?: string;
 	estimatedTime?: string;
+	phase: number;
+	phaseTitle: string;
 }
 
 export interface ZoneInfo {

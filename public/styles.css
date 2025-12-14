@@ -102,7 +102,7 @@ header::before {
     opacity: 0.75;
     font-weight: 400;
     line-height: 1.6;
-    max-width: 600px;
+    max-width: 700px;
 }
 
 .btn-reset-header {
@@ -233,10 +233,39 @@ main {
     display: flex;
     flex-direction: column;
     gap: 4px;
-    max-height: calc(100vh - 200px);
+    max-height: 600px;
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--cf-border) transparent;
+}
+
+.phase-header {
+    margin-top: 16px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, var(--cf-dark), #2c3e50);
+    border-radius: var(--radius);
+    color: white;
+}
+
+.phase-header:first-child {
+    margin-top: 0;
+}
+
+.phase-number {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.phase-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
 }
 
 .step-nav-list::-webkit-scrollbar {
@@ -361,7 +390,6 @@ main {
     font-size: 0.75rem;
     font-weight: 500;
     letter-spacing: 0.025em;
-    cursor: help;
     transition: all 0.2s ease;
 }
 

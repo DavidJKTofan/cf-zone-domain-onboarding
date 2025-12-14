@@ -65,7 +65,21 @@ class MigrationGuide {
         const navList = document.getElementById('step-nav-list');
         navList.innerHTML = '';
 
+        let currentPhase = -1;
+
         this.steps.forEach((step, index) => {
+            // Add phase header when entering a new phase
+            if (step.phase !== currentPhase) {
+                currentPhase = step.phase;
+                const phaseHeader = document.createElement('div');
+                phaseHeader.className = 'phase-header';
+                phaseHeader.innerHTML = `
+                    <div class="phase-number">Phase ${step.phase}</div>
+                    <div class="phase-title">${step.phaseTitle}</div>
+                `;
+                navList.appendChild(phaseHeader);
+            }
+
             const item = document.createElement('div');
             item.className = 'step-nav-item';
             if (index === this.currentStepIndex) item.classList.add('active');
@@ -123,13 +137,13 @@ class MigrationGuide {
                     <div><strong>Zero Downtime:</strong> Converting to Partial (CNAME) Setup does <strong>not</strong> impact your live traffic. Your domain continues to operate normally through your existing DNS provider while you configure and test Cloudflare. Traffic only routes through Cloudflare when you explicitly enable it.</div>
                 </div>
             `;
-        } else if (this.currentStepIndex === 6) {
+        } else if (this.currentStepIndex === 7) {
             warningHtml = `
                 <div class="alert alert-warning">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
-                    <div><strong>Prerequisites:</strong> Your CNAME Setup zone must be in Active status (TXT verification completed in Step 3) before the dig command will return Cloudflare Anycast IPs. If the zone is not active, dig will not resolve the .cdn.cloudflare.net hostname.</div>
+                    <div><strong>Prerequisites:</strong> Your CNAME Setup zone must be in Active status (TXT verification completed in Step 4) before the dig command will return Cloudflare Anycast IPs. If the zone is not active, dig will not resolve the .cdn.cloudflare.net hostname.</div>
                 </div>
             `;
         } else if (this.currentStepIndex === 8) {
@@ -139,6 +153,15 @@ class MigrationGuide {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                     <div><strong>DNSSEC Warning:</strong> If DNSSEC is currently enabled at your authoritative DNS provider, you must either disable it 24 hours before continuing, or set up multi-signer DNSSEC following the advanced guide.</div>
+                </div>
+            `;
+        } else if (this.currentStepIndex === 10) {
+            warningHtml = `
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Best Practice:</strong> Before changing nameservers in the next step, we recommend setting all DNS records to <strong>DNS-only (gray cloud)</strong> status. This allows you to verify DNS resolution is working correctly through Cloudflare before enabling proxy features. You can enable proxy status (orange cloud) later in Step 14 after confirming the migration is successful.</div>
                 </div>
             `;
         } else if (this.currentStepIndex === 11) {
@@ -172,7 +195,7 @@ dig TXT +short cloudflare-verify.yourdomain.com
 # Example: "723047471-2..."</code>
                 </div>
             `;
-        } else if (this.currentStepIndex === 6) {
+        } else if (this.currentStepIndex === 7) {
             commandExample = `
                 <div class="command-block">
                     <code># Important: DNS record must exist in your Cloudflare zone for this to work
