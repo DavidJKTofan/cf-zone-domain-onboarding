@@ -81,7 +81,7 @@ The frontend will automatically display these images if they exist, or show a pl
 dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records'
 ```
 
-**Progress Bar:** Edit `public/scripts.js` to exclude steps from progress bar progression that only have optional checkpoints, like Step 6 and 14.
+**Progress Bar:** Edit `public/scripts.js` to exclude steps from progress bar progression that only have optional checkpoints, like step 15.
 
 # Disclaimer
 

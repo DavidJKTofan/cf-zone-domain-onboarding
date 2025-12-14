@@ -232,7 +232,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         title: 'Update Nameservers at Registrar',
         description:
             'Change nameservers at your domain registrar to the assigned Cloudflare nameservers. Ensure all DNS records are in place. Note: If you optionally kept records as DNS-only (gray cloud), TLS certificates from Cloudflare will not apply to traffic until proxy is enabled.',
-        estimatedTime: '5-10 minutes + propagation time (1-48 hours)',
+        estimatedTime: '5-10 minutes + propagation time',
         checkpoints: [
             { id: 'dns-records-verified', label: 'All DNS records verified and in place', completed: false, optional: false },
             { id: 'nameservers-updated', label: 'Cloudflare nameservers added at registrar', completed: false, optional: false },
