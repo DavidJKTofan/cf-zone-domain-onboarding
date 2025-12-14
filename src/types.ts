@@ -26,6 +26,7 @@ export interface MigrationStep {
 	documentation: string[];
 	images?: string[];
 	dashboardLink?: string;
+	estimatedTime?: string;
 }
 
 export interface ZoneInfo {

@@ -29,11 +29,12 @@ Interactive TypeScript guide for migrating domains to Cloudflare with zero downt
 
 ## Migration Workflow
 
-The guide covers 13 steps across three phases:
+The guide covers 15 steps across four phases:
 
-1. **Phase 1: Partial Setup (Testing)** - Add zone, configure SSL/TLS, create DNS records, test with `/etc/hosts`
-2. **Phase 2: Full Setup Migration** - Handle DNSSEC, convert to full setup, update nameservers
-3. **Phase 3: Enable Proxy** - Enable orange cloud, route traffic through Cloudflare
+1. **Phase 0: Preparation** - Rollback strategy, DNS backup, monitoring plan, stakeholder communication
+2. **Phase 1: Partial Setup (Testing)** - Add zone, configure SSL/TLS, create DNS records, test with `/etc/hosts`
+3. **Phase 2: Full Setup Migration** - Handle DNSSEC, convert to full setup, update nameservers
+4. **Phase 3: Enable Proxy & Automation** - Enable orange cloud, route traffic through Cloudflare, IaC/CI-CD setup
 
 Each step includes required/optional checkpoints, descriptions, and links to official Cloudflare documentation.
 

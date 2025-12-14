@@ -264,9 +264,20 @@ dig +short yourdomain.com.cdn.cloudflare.net
         const requiredCount = step.checkpoints.filter((cp) => !cp.optional).length;
         const completedRequired = step.checkpoints.filter((cp) => !cp.optional && cp.completed).length;
 
+        // Create time badge HTML if estimatedTime field exists
+        const timeBadgeHtml = step.estimatedTime ? `<div class="time-badge" title="Estimated time - actual duration may vary">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="time-estimate-label">~</span>${step.estimatedTime}
+        </div>` : '';
+
         container.innerHTML = `
             <div class="step-header">
-                <div class="step-badge">Step ${this.currentStepIndex + 1} of ${this.steps.length}</div>
+                <div class="step-header-top">
+                    <div class="step-badge">Step ${this.currentStepIndex + 1} of ${this.steps.length}</div>
+                    ${timeBadgeHtml}
+                </div>
                 <h2 class="step-title">${step.title}</h2>
                 <p class="step-description">${step.description}</p>
             </div>
@@ -405,17 +416,19 @@ dig +short yourdomain.com.cdn.cloudflare.net
     }
 
     updateProgress() {
-        // Exclude steps that only have optional checkpoints (Step 6 and 14)
-        const optionalOnlyStepIds = ['protect-origin', 'iac-cicd'];
-        
-        const requiredSteps = this.steps.filter(step => !optionalOnlyStepIds.includes(step.id));
-        const totalSteps = requiredSteps.length;
-        
-        const completedSteps = this.steps.filter((step, index) => {
-            return !optionalOnlyStepIds.includes(step.id) && this.isStepCompleted(index);
+        // Exclude steps that only have optional checkpoints (Step 7: 'protect-origin', Step 15: 'iac-cicd')
+        const stepsToCount = this.steps.filter((step, index) => {
+            const stepId = step.id;
+            return stepId !== 'iac-cicd';
+        });
+
+        const totalSteps = stepsToCount.length;
+        const completedSteps = stepsToCount.filter((step) => {
+            const stepIndex = this.steps.indexOf(step);
+            return this.isStepCompleted(stepIndex);
         }).length;
-        
-        const percentage = totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+
+        const percentage = Math.round((completedSteps / totalSteps) * 100);
 
         document.getElementById('progress-text').textContent = `Step ${this.currentStepIndex + 1} of ${this.steps.length}`;
         document.getElementById('progress-percentage').textContent = `${percentage}%`;
