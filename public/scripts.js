@@ -8,9 +8,11 @@ class MigrationGuide {
 
     async init() {
         await this.loadSteps();
+        this.checkUrlHash();
         this.renderStepNav();
         this.renderCurrentStep();
         this.updateProgress();
+        this.setupHashListener();
     }
 
     async loadSteps() {
@@ -91,11 +93,7 @@ class MigrationGuide {
             `;
 
             item.addEventListener('click', () => {
-                this.currentStepIndex = index;
-                this.renderStepNav();
-                this.renderCurrentStep();
-                this.updateProgress();
-                this.saveState();
+                this.navigateToStep(index);
             });
 
             navList.appendChild(item);
@@ -390,22 +388,14 @@ dig +short yourdomain.com.cdn.cloudflare.net
 
     nextStep() {
         if (this.canProceed()) {
-            this.currentStepIndex++;
-            this.renderStepNav();
-            this.renderCurrentStep();
-            this.updateProgress();
-            this.saveState();
+            this.navigateToStep(this.currentStepIndex + 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
     previousStep() {
         if (this.currentStepIndex > 0) {
-            this.currentStepIndex--;
-            this.renderStepNav();
-            this.renderCurrentStep();
-            this.updateProgress();
-            this.saveState();
+            this.navigateToStep(this.currentStepIndex - 1);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
@@ -431,11 +421,53 @@ dig +short yourdomain.com.cdn.cloudflare.net
         localStorage.removeItem('cf-migration-state');
         this.state = { currentStep: 0, checkpoints: {} };
 
+        // Clear URL hash
+        window.history.pushState(null, '', window.location.pathname);
+
         // Re-render everything
         this.renderStepNav();
         this.renderCurrentStep();
         this.updateProgress();
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    navigateToStep(index) {
+        this.currentStepIndex = index;
+        window.history.pushState(null, '', `#step-${index + 1}`);
+        this.renderStepNav();
+        this.renderCurrentStep();
+        this.updateProgress();
+        this.saveState();
+    }
+
+    checkUrlHash() {
+        const hash = window.location.hash.slice(1);
+        if (hash && hash.startsWith('step-')) {
+            const stepNumber = parseInt(hash.replace('step-', ''), 10);
+            if (!isNaN(stepNumber) && stepNumber > 0 && stepNumber <= this.steps.length) {
+                this.currentStepIndex = stepNumber - 1;
+            }
+        }
+    }
+
+    setupHashListener() {
+        window.addEventListener('hashchange', () => {
+            const hash = window.location.hash.slice(1);
+            if (hash && hash.startsWith('step-')) {
+                const stepNumber = parseInt(hash.replace('step-', ''), 10);
+                if (!isNaN(stepNumber) && stepNumber > 0 && stepNumber <= this.steps.length) {
+                    const stepIndex = stepNumber - 1;
+                    if (stepIndex !== this.currentStepIndex) {
+                        this.currentStepIndex = stepIndex;
+                        this.renderStepNav();
+                        this.renderCurrentStep();
+                        this.updateProgress();
+                        this.saveState();
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                }
+            }
+        });
     }
 
     updateProgress() {
