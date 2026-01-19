@@ -194,25 +194,6 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         phaseTitle: 'Partial Setup (Testing)',
     },
     {
-        id: 'handle-dnssec',
-        title: 'Handle DNSSEC Migration',
-        description:
-            'If DNSSEC is active at your current DNS provider, you must either disable it before migration (wait for DS record TTL to expire), or use multi-signer DNSSEC to avoid validation failures during the transition.',
-        estimatedTime: '5 minutes (or 24-48 hours if waiting for DS TTL)',
-        checkpoints: [
-            { id: 'dnssec-status-checked', label: 'DNSSEC status verified at current DNS provider and registrar', completed: false, optional: false },
-            { id: 'dnssec-disabled', label: 'DNSSEC disabled and DS record removed at registrar (if not using multi-signer)', completed: false, optional: true },
-            { id: 'ds-ttl-expired', label: 'Waited for DS record TTL to expire (typically 24-48h)', completed: false, optional: true },
-            { id: 'multisigner-setup', label: 'Multi-signer DNSSEC configured (alternative to disabling)', completed: false, optional: true },
-        ],
-        documentation: [
-            'https://developers.cloudflare.com/dns/dnssec/dnssec-active-migration/',
-            'https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/',
-        ],
-        phase: 2,
-        phaseTitle: 'Full Setup Migration (Live)',
-    },
-    {
         id: 'convert-full',
         title: 'Convert to Full Setup',
         description:
@@ -231,6 +212,25 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         images: ['img/step-10-convert-full.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/settings',
+        phase: 2,
+        phaseTitle: 'Full Setup Migration (Live)',
+    },
+    {
+        id: 'handle-dnssec',
+        title: 'Handle DNSSEC Migration',
+        description:
+            'If DNSSEC is active at your current DNS provider, you must either disable it before migration (wait for DS record TTL to expire), or use multi-signer DNSSEC to avoid validation failures during the transition. This step requires Full Setup to be completed first.',
+        estimatedTime: '5 minutes (or 24-48 hours if waiting for DS TTL)',
+        checkpoints: [
+            { id: 'dnssec-status-checked', label: 'DNSSEC status verified at current DNS provider and registrar', completed: false, optional: false },
+            { id: 'dnssec-disabled', label: 'DNSSEC disabled and DS record removed at registrar (if not using multi-signer)', completed: false, optional: true },
+            { id: 'ds-ttl-expired', label: 'Waited for DS record TTL to expire (typically 24-48h)', completed: false, optional: true },
+            { id: 'multisigner-setup', label: 'Multi-signer DNSSEC configured (alternative to disabling)', completed: false, optional: true },
+        ],
+        documentation: [
+            'https://developers.cloudflare.com/dns/dnssec/dnssec-active-migration/',
+            'https://developers.cloudflare.com/dns/dnssec/multi-signer-dnssec/',
+        ],
         phase: 2,
         phaseTitle: 'Full Setup Migration (Live)',
     },
