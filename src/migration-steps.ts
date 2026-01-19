@@ -296,6 +296,37 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         phaseTitle: 'Enable Proxy & Automation',
     },
     {
+        id: 'security-cleanup',
+        title: 'Post-Migration Security Cleanup & Hardening',
+        description:
+            'After migration is complete and traffic is flowing through Cloudflare, perform security cleanup and hardening. Remove temporary DNS records created during Partial Setup and audit all TXT records to reduce attack surface. DNS TXT records can expose SaaS integrations, verification tokens, and technology stack information to attackers for reconnaissance.',
+        estimatedTime: '30 minutes - 1 hour',
+        checkpoints: [
+            { id: 'verification-txt-removed', label: 'Verification TXT record (cloudflare-verify) removed from DNS', completed: false, optional: false },
+            { id: 'txt-records-audited', label: 'All DNS TXT records audited for obsolete verification tokens (Google, Microsoft, Salesforce, etc.)', completed: false, optional: true },
+            { id: 'dangling-cnames-checked', label: 'Checked for dangling CNAME records that could lead to subdomain takeover', completed: false, optional: true },
+            { id: 'dnssec-enabled', label: 'DNSSEC enabled on Cloudflare', completed: false, optional: true },
+            { id: 'origin-security-reviewed', label: 'Origin security reviewed (Authenticated Origin Pulls, Tunnel, IP allowlisting)', completed: false, optional: false },
+            { id: 'ssl-hardened', label: 'SSL/TLS settings hardened (minimum TLS version, cipher suites)', completed: false, optional: true },
+            { id: 'security-headers-configured', label: 'Security headers configured (HSTS, CSP, X-Frame-Options)', completed: false, optional: true },
+            { id: 'waf-rules-reviewed', label: 'WAF managed rules and custom rules reviewed', completed: false, optional: true },
+            { id: 'api-tokens-audited', label: 'API tokens and access permissions audited', completed: false, optional: true },
+        ],
+        documentation: [
+            'https://developers.cloudflare.com/dns/dnssec/',
+            'https://developers.cloudflare.com/security-center/security-insights/',
+            'https://developers.cloudflare.com/ssl/edge-certificates/additional-options/minimum-tls/',
+            'https://developers.cloudflare.com/ssl/edge-certificates/additional-options/cipher-suites/',
+            'https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/',
+            'https://developers.cloudflare.com/rules/transform/managed-transforms/reference/#add-security-headers',
+            'https://developers.cloudflare.com/waf/managed-rules/',
+            'https://developers.cloudflare.com/fundamentals/api/get-started/create-token/',
+            'https://developers.cloudflare.com/fundamentals/manage-members/dashboard-sso/',
+        ],
+        phase: 3,
+        phaseTitle: 'Enable Proxy & Automation',
+    },
+    {
         id: 'iac-cicd',
         title: 'Infrastructure as Code & CI/CD Pipelines',
         description:
