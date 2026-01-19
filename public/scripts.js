@@ -159,7 +159,7 @@ class MigrationGuide {
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <div><strong>Best Practice:</strong> Before changing nameservers in the next step, we recommend setting all DNS records to <strong>DNS-only (gray cloud)</strong> status. This allows you to verify DNS resolution is working correctly through Cloudflare before enabling proxy features. You can enable proxy status (orange cloud) later in Step 14 after confirming the migration is successful.</div>
+                    <div><strong>Best Practice:</strong> Before changing nameservers in step 13, we recommend setting all DNS records to <strong>DNS-only (gray cloud)</strong> status. This allows you to verify DNS resolution is working correctly through Cloudflare before enabling proxy features. You can enable proxy status (orange cloud) later in Step 14 after confirming the migration is successful.</div>
                 </div>
             `;
         } else if (this.currentStepIndex === 11) {
