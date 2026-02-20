@@ -1,9 +1,10 @@
 # Cloudflare Onboarding Guides
 
-Interactive TypeScript guides for onboarding to Cloudflare products. Built as a Cloudflare Worker with static assets.
+Interactive TypeScript guides for onboarding to Cloudflare products. Built as a Cloudflare Worker with static assets, designed to be modular, scalable, and mobile-responsive.
 
 **Currently available:**
-- **Application Services** - Zero-Downtime Domain Migration (Partial → Full Setup)
+- **Application Services** - Zero-Downtime Domain Migration (Partial to Full Setup)
+- **Cloudflare One** - SASE & Zero Trust Onboarding (VPN replacement, SWG, ZTNA)
 
 ## Project Structure
 
@@ -11,97 +12,255 @@ Interactive TypeScript guides for onboarding to Cloudflare products. Built as a 
 .
 ├── src/
 │   ├── index.ts              # Worker entry point (routing & API)
-│   ├── migration-steps.ts    # Migration workflow definitions
+│   ├── migration-steps.ts    # Legacy migration steps (deprecated)
 │   ├── types.ts              # TypeScript type definitions
 │   └── guides/
 │       ├── index.ts          # Guides module exports
 │       ├── types.ts          # Guide type definitions
 │       ├── registry.ts       # Guide categories registry
-│       └── application-services/
-│           └── zero-downtime-migration.ts
+│       ├── application-services/
+│       │   └── zero-downtime-migration.ts
+│       └── cloudflare-one/
+│           └── sase-onboarding.ts
 ├── public/
 │   ├── index.html            # Landing page (homepage)
 │   ├── guide.html            # Guide page template
-│   ├── styles.css            # Application styles
+│   ├── styles.css            # Application styles (responsive)
 │   ├── landing.css           # Landing page styles
-│   └── scripts.js            # Frontend logic
+│   ├── scripts.js            # Frontend logic (MigrationGuide class)
+│   └── img/                  # Step images by category
+│       ├── application-services/
+│       └── cloudflare-one/
 ├── wrangler.jsonc            # Worker configuration
 ├── package.json              # Dependencies and scripts
 ├── tsconfig.json             # TypeScript configuration
 └── README.md                 # This file
 ```
 
-### Architecture
+## Architecture
 
-- **Backend**: Cloudflare Worker with routing for landing page, guides, and API endpoints
-- **Frontend**: Vanilla JavaScript SPA with step-based workflow
-- **State**: Browser localStorage for checkpoint persistence
-- **Assets**: Static files served via Workers Assets binding
-- **Routing**:
-  - `/` → Landing page with guide categories
-  - `/guide/:slug` → Individual guide pages
-  - `/api/*` → JSON API endpoints
+### Backend (Cloudflare Worker)
+- TypeScript-based Worker with routing for landing page, guides, and API endpoints
+- Static assets served via Workers Assets binding
+- Modular guide system for easy extensibility
 
-## Migration Workflow
+### Frontend (Vanilla JavaScript SPA)
+- Step-based workflow with checkbox progress tracking
+- State persistence in browser localStorage (per guide)
+- Mobile-responsive design with CSS media queries
+- Guide-specific warnings and command examples
 
-The guide covers 15 steps across four phases:
+### Routing
+- `/` - Landing page with guide categories
+- `/guide/:slug` - Individual guide pages
+- `/api/steps/:slug` - Steps for specific guide
+- `/api/guides` - All guide categories
+- `/api/guides/:slug` - Specific guide metadata
+- `/api/documentation` - Categorized documentation links
 
-1. **Phase 0: Preparation** - Rollback strategy, DNS backup, monitoring plan, stakeholder communication
-2. **Phase 1: Partial Setup (Testing)** - Add zone, configure SSL/TLS, create DNS records, test with `/etc/hosts`
-3. **Phase 2: Full Setup Migration** - Handle DNSSEC, convert to full setup, update nameservers
-4. **Phase 3: Enable Proxy & Automation** - Enable orange cloud, route traffic through Cloudflare, IaC/CI-CD setup
+## Cloudflare One (SASE & Zero Trust) Guide
 
-Each step includes required/optional checkpoints, descriptions, and links to official Cloudflare documentation.
+The SASE onboarding guide covers 19 steps across 7 phases:
+
+### Phase 0: Preparation
+1. **Planning & Architecture Design** - Use cases, network inventory, rollout phases
+
+### Phase 1: Foundation Setup
+2. **Create Cloudflare One Account** - Zero Trust organization setup
+3. **Integrate Identity Provider** - IdP connection, SCIM, MFA enforcement
+4. **Configure Global Settings** - Block pages, logging, authentication domain
+
+### Phase 2: Network Connectivity
+5. **Deploy Cloudflare Tunnel** - Private network connectivity with HA
+6. **Deploy WARP Client** - Device enrollment, split tunnel, MDM
+
+### Phase 3: Security Policies (Gateway)
+7. **Gateway DNS Policies** - DNS filtering, security categories, blocklists
+8. **Gateway Network Policies** - TCP/UDP filtering, implicit deny
+9. **Gateway HTTP Policies** - TLS inspection, AV scanning, content filtering
+10. **Resolver Policies** - Private DNS, hostname-based routing
+
+### Phase 4: Access Control (ZTNA)
+11. **Access Applications** - Self-hosted apps, SSH/RDP browser rendering
+12. **Device Posture Checks** - WARP checks, EDR integration
+13. **WARP Session Timeout** - Re-authentication configuration
+
+### Phase 5: Advanced Security
+14. **Data Loss Prevention** - DLP profiles, sensitive data detection
+15. **Browser Isolation** - RBI for risky sites, privileged users
+16. **CASB & Shadow IT** - SaaS discovery, API-driven CASB
+17. **Egress Policies** - Dedicated IPs, virtual networks
+
+### Phase 6: Rollout & Operations
+18. **Testing & Validation** - Pilot testing, policy verification
+19. **Production Rollout** - Phased deployment, user communication
+20. **Ongoing Operations** - Alerting, SIEM integration, Terraform
+
+## Application Services (Domain Migration) Guide
+
+The domain migration guide covers 15 steps across 4 phases:
+
+1. **Phase 0: Preparation** - Rollback strategy, DNS backup, monitoring, stakeholder communication
+2. **Phase 1: Partial Setup** - Add zone, configure SSL/TLS, create DNS records, test with /etc/hosts
+3. **Phase 2: Full Setup** - Handle DNSSEC, convert to full setup, update nameservers
+4. **Phase 3: Enable Proxy** - Enable orange cloud, route traffic, IaC/CI-CD setup
 
 ## Quick Start
 
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/DavidJKTofan/cf-zone-domain-onboarding)
 
+```bash
+# Install dependencies
+npm install
+
+# Run locally
+npm run dev
+
+# Deploy to Cloudflare
+npm run deploy
+```
+
 ## Features
 
 - **Interactive Checkpoints** - Track progress with required/optional validation
 - **State Persistence** - Auto-save progress in browser localStorage
-- **Responsive Design** - Responsive UI for desktop and mobile
+- **Responsive Design** - Mobile-first CSS with breakpoints for tablet/desktop
 - **Official Documentation** - Direct links to Cloudflare docs for each step
-- **Modular Architecture** - Easy to extend with new migration workflows
+- **Dashboard Deep Links** - Quick access to relevant Cloudflare dashboard pages
+- **Contextual Warnings** - Step-specific alerts for common pitfalls
+- **Command Examples** - Copy-paste commands for CLI operations
+- **Modular Architecture** - Easy to extend with new guides and steps
+
+## Adding a New Guide
+
+### 1. Create Steps File
+Create a new TypeScript file in `src/guides/<category>/`:
+
+```typescript
+// src/guides/cloudflare-one/my-new-guide.ts
+import type { MigrationStep } from '../../types';
+
+export const MY_NEW_GUIDE_STEPS: Omit<MigrationStep, 'status'>[] = [
+    {
+        id: 'step-id',
+        title: 'Step Title',
+        description: 'Step description with details...',
+        estimatedTime: '15 minutes',
+        checkpoints: [
+            { id: 'task-1', label: 'First task', completed: false, optional: false },
+            { id: 'task-2', label: 'Optional task', completed: false, optional: true },
+        ],
+        documentation: ['https://developers.cloudflare.com/...'],
+        dashboardLink: 'https://one.dash.cloudflare.com/?to=/:account/...',
+        phase: 1,
+        phaseTitle: 'Phase Name',
+    },
+    // ... more steps
+];
+
+export const GUIDE_METADATA = {
+    id: 'my-new-guide',
+    slug: 'my-new-guide',
+    title: 'My New Guide',
+    // ...
+};
+```
+
+### 2. Register the Guide
+Add to `src/guides/registry.ts`:
+
+```typescript
+guides: [
+    // existing guides...
+    {
+        id: 'my-new-guide',
+        slug: 'my-new-guide',
+        title: 'My New Guide',
+        category: 'cloudflare-one',
+        status: 'available',
+        estimatedDuration: '1-2 hours',
+    }
+]
+```
+
+### 3. Add to GUIDE_STEPS
+Update `src/index.ts`:
+
+```typescript
+import { MY_NEW_GUIDE_STEPS } from './guides/cloudflare-one/my-new-guide';
+
+const GUIDE_STEPS: Record<string, Omit<MigrationStep, 'status'>[]> = {
+    // existing...
+    'my-new-guide': MY_NEW_GUIDE_STEPS,
+};
+```
+
+### 4. Add Guide Header
+Update `public/scripts.js` `guideHeaders` object:
+
+```javascript
+'my-new-guide': {
+    title: 'My New Guide Title',
+    subtitle: 'Subtitle here',
+    description: 'Description...',
+    version: 'v1.0',
+    pageTitle: 'Browser tab title'
+}
+```
+
+### 5. Add Warnings/Commands (Optional)
+Update `getSaseWarning()` and `getSaseCommandExample()` methods in `public/scripts.js` for step-specific content.
+
+## Customization
+
+### Dashboard Deep Links
+Use Cloudflare's dynamic dashboard URL format:
+```typescript
+dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records'
+dashboardLink: 'https://one.dash.cloudflare.com/?to=/:account/gateway/dns'
+```
+
+### Step Images
+Place images in `public/img/<category>/` and reference in steps:
+```typescript
+images: ['/img/cloudflare-one/tunnel-setup.png']
+```
+
+### Progress Bar
+Steps with only optional checkpoints are automatically excluded from progress calculation.
 
 ## API Endpoints
 
 - `GET /api/guides` - Returns all guide categories and metadata
 - `GET /api/guides/:slug` - Returns specific guide metadata
-- `GET /api/steps` - Returns all migration steps with checkpoints
+- `GET /api/steps/:slug` - Returns steps for specific guide
 - `GET /api/documentation` - Returns categorized documentation links
 
 ## Key Resources
 
+### Cloudflare One (Zero Trust)
+- [SASE Reference Architecture](https://developers.cloudflare.com/reference-architecture/architectures/sase/)
+- [Replace Your VPN Learning Path](https://developers.cloudflare.com/learning-paths/replace-vpn/)
+- [Secure Internet Traffic Learning Path](https://developers.cloudflare.com/learning-paths/secure-internet-traffic/)
+- [ZTNA Policy Design Guide](https://developers.cloudflare.com/reference-architecture/design-guides/designing-ztna-access-policies/)
+
+### Application Services
 - [Minimize Downtime](https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/)
 - [Partial (CNAME) Setup](https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/)
 - [Convert Partial to Full Setup](https://developers.cloudflare.com/dns/zone-setups/conversions/convert-partial-to-full/)
-- [Securely deliver applications with Cloudflare](https://developers.cloudflare.com/reference-architecture/design-guides/secure-application-delivery/)
 
-## Image Guidelines
+## Workers Best Practices
 
-- **Format**: PNG or JPEG
-- **Size**: Recommended width 800-1200px
-- **Content**: Clear screenshots from Cloudflare dashboard or relevant configuration screens
-- **Quality**: High resolution, clearly readable text
-- **Annotations**: Add arrows, highlights, or text to draw attention to important elements
+This project follows [Cloudflare Workers Best Practices](https://developers.cloudflare.com/workers/best-practices/):
 
-The frontend will automatically display these images if they exist, or show a placeholder if missing.
-
-## Customization
-
-**Migration Steps:** Edit `src/migration-steps.ts` to add, modify, or remove migration steps. The modular structure makes it easy to create custom workflows for different use cases.
-
-**Dashboard Deep Links:** Add the optional `dashboardLink` field to any step to display a prominent button that links directly to the relevant Cloudflare Dashboard page. Example:
-```typescript
-dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records'
-```
-
-**Progress Bar:** Edit `public/scripts.js` to exclude steps from progress bar progression that only have optional checkpoints, like step 15.
+- **Modular Code Structure** - Guides are organized in separate modules
+- **Type Safety** - Full TypeScript with strict type checking
+- **Asset Binding** - Static assets served via Workers Assets
+- **Minimal Dependencies** - No external runtime dependencies
+- **Error Handling** - Proper 404/405 responses for invalid routes
 
 ## Disclaimer
 
 **This is an unofficial third-party tool and is NOT associated with or endorsed by Cloudflare.**
 
-This tool is provided for educational and informational purposes only. It is the user's responsibility to thoroughly review all configurations, verify DNS records, and validate SSL/TLS certificates before and after migration. Always test in non-production/staging environments first. The authors assume no liability for any issues arising from the use of this guide.
+This tool is provided for educational and informational purposes only. It is the user's responsibility to thoroughly review all configurations, verify settings, and test in non-production environments first. The authors assume no liability for any issues arising from the use of this guide.

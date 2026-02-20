@@ -20,6 +20,8 @@ export interface GuideMetadata {
     tags?: string[];
     version?: string;
     lastUpdated?: string;
+    /** When true, guide is hidden from public landing page (shows "Work in Progress") */
+    draft?: boolean;
 }
 
 export interface GuideCategory {

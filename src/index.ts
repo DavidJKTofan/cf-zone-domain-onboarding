@@ -2,6 +2,13 @@
 import type { Env, MigrationStep } from './types';
 import { MIGRATION_STEPS } from './migration-steps';
 import { GUIDE_CATEGORIES, getGuideBySlug } from './guides';
+import { SASE_ONBOARDING_STEPS } from './guides/cloudflare-one/sase-onboarding';
+
+// Map of guide slugs to their step data
+const GUIDE_STEPS: Record<string, Omit<MigrationStep, 'status'>[]> = {
+	'zero-downtime-migration': MIGRATION_STEPS,
+	'sase-onboarding': SASE_ONBOARDING_STEPS,
+};
 
 // Response headers for JSON API endpoints
 const JSON_HEADERS: HeadersInit = {
@@ -55,13 +62,30 @@ function handleApiRequest(url: URL, request: Request): Response {
 		);
 	}
 
-	// GET /api/steps - return migration steps
+	// GET /api/steps - return migration steps (default: zero-downtime-migration)
 	if (url.pathname === '/api/steps') {
 		const steps: MigrationStep[] = MIGRATION_STEPS.map((step) => ({
 			...step,
 			status: 'pending',
 		}));
 		return Response.json({ steps }, { headers: JSON_HEADERS });
+	}
+
+	// GET /api/steps/:slug - return steps for a specific guide
+	const stepsMatch = url.pathname.match(/^\/api\/steps\/([a-z0-9-]+)$/);
+	if (stepsMatch) {
+		const guideSteps = GUIDE_STEPS[stepsMatch[1]];
+		if (guideSteps) {
+			const steps: MigrationStep[] = guideSteps.map((step) => ({
+				...step,
+				status: 'pending',
+			}));
+			return Response.json({ steps }, { headers: JSON_HEADERS });
+		}
+		return Response.json(
+			{ error: 'Guide steps not found' },
+			{ status: 404, headers: JSON_HEADERS }
+		);
 	}
 
 	// GET /api/guides - return guides registry
