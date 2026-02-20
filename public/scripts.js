@@ -257,6 +257,55 @@ class MigrationGuide {
             <span class="time-estimate-label">~</span>${step.estimatedTime}
         </div>` : '';
 
+        // Create Terraform files section if terraformFiles exist
+        const terraformFilesHtml = step.terraformFiles && step.terraformFiles.length > 0 ? `
+            <div class="terraform-files-section">
+                <div class="terraform-files-header">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                    </svg>
+                    <h4>Terraform Templates (Provider v5)</h4>
+                </div>
+                <p class="terraform-description">Ready-to-use Terraform configuration files for Cloudflare Provider v5. Click to view or download.</p>
+                <div class="terraform-files-grid">
+                    ${step.terraformFiles.map(file => `
+                        <div class="terraform-file-card" data-file-path="${file.path}" onclick="guide.viewTerraformFile('${file.path}', '${file.name}')">
+                            <div class="terraform-file-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div class="terraform-file-info">
+                                <span class="terraform-file-name">${file.name}</span>
+                                <span class="terraform-file-desc">${file.description}</span>
+                            </div>
+                            <div class="terraform-file-actions">
+                                <button class="btn-icon" onclick="event.stopPropagation(); guide.downloadTerraformFile('${file.path}', '${file.name}')" title="Download file">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="terraform-actions">
+                    <button class="btn btn-secondary" onclick="guide.downloadAllTerraformFiles()">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Download All Files (.zip)
+                    </button>
+                    <a href="https://github.com/cloudflare/terraform-provider-cloudflare" target="_blank" rel="noopener" class="btn btn-secondary">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" width="16" height="16">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Provider GitHub
+                    </a>
+                </div>
+            </div>
+        ` : '';
+
         container.innerHTML = `
             <div class="step-header">
                 <div class="step-header-top">
@@ -269,6 +318,7 @@ class MigrationGuide {
 
             ${warningHtml}
             ${commandExample}
+            ${terraformFilesHtml}
             ${imagesHtml}
             ${dashboardLinkHtml}
 
@@ -824,6 +874,200 @@ dig +short yourdomain.com.cdn.cloudflare.net
         document.getElementById('progress-text').textContent = `Step ${this.currentStepIndex + 1} of ${this.steps.length}`;
         document.getElementById('progress-percentage').textContent = `${percentage}%`;
         document.getElementById('progress-fill').style.width = `${percentage}%`;
+    }
+
+    // Terraform file viewing and downloading methods
+    async viewTerraformFile(filePath, fileName) {
+        try {
+            const response = await fetch(filePath);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch file: ${response.status}`);
+            }
+            const content = await response.text();
+            this.showTerraformModal(fileName, content, filePath);
+        } catch (error) {
+            console.error('Failed to load Terraform file:', error);
+            alert(`Failed to load ${fileName}. Please try again.`);
+        }
+    }
+
+    showTerraformModal(fileName, content, filePath) {
+        // Remove existing modal if present
+        const existingModal = document.getElementById('terraform-modal');
+        if (existingModal) {
+            existingModal.remove();
+        }
+
+        const modal = document.createElement('div');
+        modal.id = 'terraform-modal';
+        modal.className = 'terraform-modal';
+        modal.innerHTML = `
+            <div class="terraform-modal-backdrop" onclick="guide.closeTerraformModal()"></div>
+            <div class="terraform-modal-content">
+                <div class="terraform-modal-header">
+                    <div class="terraform-modal-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>${fileName}</span>
+                    </div>
+                    <div class="terraform-modal-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="guide.copyTerraformContent()" title="Copy to clipboard">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            </svg>
+                            Copy
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="guide.downloadTerraformFile('${filePath}', '${fileName}')" title="Download file">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download
+                        </button>
+                        <button class="btn-icon" onclick="guide.closeTerraformModal()" title="Close">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"/>
+                                <line x1="6" y1="6" x2="18" y2="18"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="terraform-modal-body">
+                    <pre class="terraform-code"><code>${this.escapeHtml(content)}</code></pre>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+        document.body.style.overflow = 'hidden';
+
+        // Store content for copy functionality
+        this.currentTerraformContent = content;
+
+        // Add escape key listener
+        this.terraformModalEscapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                this.closeTerraformModal();
+            }
+        };
+        document.addEventListener('keydown', this.terraformModalEscapeHandler);
+    }
+
+    closeTerraformModal() {
+        const modal = document.getElementById('terraform-modal');
+        if (modal) {
+            modal.remove();
+            document.body.style.overflow = '';
+            if (this.terraformModalEscapeHandler) {
+                document.removeEventListener('keydown', this.terraformModalEscapeHandler);
+            }
+        }
+    }
+
+    async copyTerraformContent() {
+        if (this.currentTerraformContent) {
+            try {
+                await navigator.clipboard.writeText(this.currentTerraformContent);
+                // Show brief feedback
+                const copyBtn = document.querySelector('.terraform-modal-actions .btn-secondary');
+                if (copyBtn) {
+                    const originalText = copyBtn.innerHTML;
+                    copyBtn.innerHTML = `
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                        Copied!
+                    `;
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                }
+            } catch (error) {
+                console.error('Failed to copy:', error);
+                alert('Failed to copy to clipboard');
+            }
+        }
+    }
+
+    async downloadTerraformFile(filePath, fileName) {
+        try {
+            const response = await fetch(filePath);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch file: ${response.status}`);
+            }
+            const content = await response.text();
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Failed to download Terraform file:', error);
+            alert(`Failed to download ${fileName}. Please try again.`);
+        }
+    }
+
+    async downloadAllTerraformFiles() {
+        const step = this.steps[this.currentStepIndex];
+        if (!step.terraformFiles || step.terraformFiles.length === 0) {
+            return;
+        }
+
+        // Check if JSZip is available, if not, download files individually
+        if (typeof JSZip === 'undefined') {
+            // Fallback: download files one by one
+            for (const file of step.terraformFiles) {
+                await this.downloadTerraformFile(file.path, file.name);
+                // Small delay between downloads
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
+            return;
+        }
+
+        try {
+            const zip = new JSZip();
+            
+            // Fetch all files and add to zip
+            const fetchPromises = step.terraformFiles.map(async (file) => {
+                const response = await fetch(file.path);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch ${file.name}`);
+                }
+                const content = await response.text();
+                zip.file(file.name, content);
+            });
+
+            await Promise.all(fetchPromises);
+
+            // Generate and download zip
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            const url = URL.createObjectURL(zipBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'terraform-cloudflare-v5.zip';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error('Failed to create zip:', error);
+            alert('Failed to download files. Please try downloading individually.');
+        }
+    }
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 }
 

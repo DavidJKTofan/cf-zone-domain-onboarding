@@ -1,0 +1,161 @@
+# Cloudflare Application Services - Example Variables (Provider v5.17.0+)
+# Copy this file to terraform.tfvars and customize for your environment
+#
+# IMPORTANT SECURITY NOTES:
+# 1. Add terraform.tfvars to your .gitignore file!
+# 2. Never commit credentials to version control
+# 3. Prefer using environment variables for API tokens:
+#    export CLOUDFLARE_API_TOKEN="your-token-here"
+#
+# v5 MIGRATION NOTES:
+# - DNS records: 'value' is now 'content', 'name' must be full FQDN
+# - Zone settings: Individual cloudflare_zone_setting resources replace cloudflare_zone_settings_override
+# - Rulesets: Block syntax { } changed to object syntax = { } or list = [{ }]
+#
+# Reference: https://developers.cloudflare.com/terraform/advanced-topics/best-practices/
+
+# =============================================================================
+# AUTHENTICATION (Recommended: use environment variable instead)
+# =============================================================================
+
+# RECOMMENDED: Set the API token via environment variable:
+#   export CLOUDFLARE_API_TOKEN="your-api-token-here"
+#
+# Create API token at: https://dash.cloudflare.com/profile/api-tokens
+# Required permissions: Zone:Zone:Read, Zone:DNS:Edit, Zone:WAF:Edit,
+#                       Zone:Zone Settings:Edit, Zone:SSL and Certificates:Edit
+#
+# Only uncomment below if you cannot use environment variables:
+# cloudflare_api_token = "your-api-token-here"
+
+# Cloudflare Account ID
+# Find at: https://dash.cloudflare.com/?to=/:account/
+cloudflare_account_id = "your-account-id-here"
+
+# Domain to manage
+domain = "example.com"
+
+# =============================================================================
+# DNS RECORDS
+# v5 CHANGES:
+# - 'value' is now 'content'
+# - 'name' must be the full FQDN (e.g., "www.example.com" not just "www")
+# =============================================================================
+
+# Standard DNS records (A, AAAA, CNAME)
+dns_records = [
+  {
+    name    = "example.com"       # v5: Full FQDN for root domain
+    type    = "A"
+    content = "192.0.2.1"         # v5: 'value' renamed to 'content'
+    proxied = true
+  },
+  {
+    name    = "www.example.com"   # v5: Full FQDN required
+    type    = "CNAME"
+    content = "example.com"       # v5: 'value' renamed to 'content'
+    proxied = true
+  },
+  {
+    name    = "api.example.com"   # v5: Full FQDN
+    type    = "A"
+    content = "192.0.2.2"
+    proxied = true
+    comment = "API server"
+  },
+  # Example: DNS-only record (not proxied)
+  # {
+  #   name    = "mail.example.com"
+  #   type    = "A"
+  #   content = "192.0.2.3"
+  #   proxied = false
+  #   comment = "Mail server"
+  # },
+]
+
+# MX records for email
+mx_records = [
+  {
+    name     = "example.com"            # v5: Full FQDN
+    content  = "mail.example.com"       # v5: 'value' renamed to 'content'
+    priority = 10
+  },
+  # Example: Google Workspace
+  # {
+  #   name     = "example.com"
+  #   content  = "aspmx.l.google.com"
+  #   priority = 1
+  # },
+  # {
+  #   name     = "example.com"
+  #   content  = "alt1.aspmx.l.google.com"
+  #   priority = 5
+  # },
+]
+
+# TXT records (SPF, DKIM, DMARC, verification)
+txt_records = [
+  {
+    name    = "example.com"                              # v5: Full FQDN
+    content = "v=spf1 include:_spf.google.com ~all"      # v5: 'value' renamed to 'content'
+    comment = "SPF record"
+  },
+  {
+    name    = "_dmarc.example.com"                       # v5: Full FQDN
+    content = "v=DMARC1; p=quarantine; rua=mailto:dmarc@example.com"
+    comment = "DMARC policy"
+  },
+  # Example: Google site verification
+  # {
+  #   name    = "example.com"
+  #   content = "google-site-verification=XXXXX"
+  #   comment = "Google verification"
+  # },
+]
+
+# =============================================================================
+# SSL/TLS SETTINGS
+# =============================================================================
+
+# SSL/TLS encryption mode
+# Options: "off", "flexible", "full", "strict"
+# Recommended: "strict" (requires valid certificate on origin)
+ssl_mode = "full"
+
+# Minimum TLS version
+# Options: "1.0", "1.1", "1.2", "1.3"
+# Recommended: "1.2" for compatibility, "1.3" for maximum security
+min_tls_version = "1.2"
+
+# =============================================================================
+# SECURITY SETTINGS
+# =============================================================================
+
+# Security level
+# Options: "off", "essentially_off", "low", "medium", "high", "under_attack"
+security_level = "medium"
+
+# =============================================================================
+# CACHE SETTINGS
+# =============================================================================
+
+# Default browser cache TTL (0 = respect origin headers)
+browser_cache_ttl = 14400  # 4 hours
+
+# Enable Tiered Cache for improved cache hit rates
+enable_tiered_cache = true
+
+# =============================================================================
+# WAF SETTINGS
+# =============================================================================
+
+# Enable managed WAF rulesets
+enable_managed_waf   = true
+enable_owasp_ruleset = true
+
+# =============================================================================
+# NOTIFICATIONS
+# =============================================================================
+
+# Notification email (optional)
+notification_email = "admin@example.com"

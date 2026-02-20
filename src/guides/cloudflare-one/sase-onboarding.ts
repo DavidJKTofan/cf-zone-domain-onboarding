@@ -508,7 +508,7 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'ongoing-operations',
         title: 'Ongoing Operations & Optimization',
         description:
-            'Establish operational procedures for ongoing management. Set up alerting, configure log export to SIEM, review policies regularly, and maintain cloudflared/WARP client updates. Consider Infrastructure as Code (Terraform) for policy management.',
+            'Establish operational procedures for ongoing management. Set up alerting, configure log export to SIEM, review policies regularly, and maintain cloudflared/WARP client updates. Implement Infrastructure as Code (Terraform) for policy management using the community Terraform demo repository for Zero Trust configurations.',
         estimatedTime: 'Ongoing',
         checkpoints: [
             { id: 'alerting-configured', label: 'Alerting configured for security events and tunnel health', completed: false, optional: false },
@@ -518,13 +518,15 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'regular-review-scheduled', label: 'Monthly policy review cadence established', completed: false, optional: false },
             { id: 'policy-naming-convention', label: 'Policy naming convention documented and enforced', completed: false, optional: true },
             { id: 'incident-response-updated', label: 'Incident response procedures updated for ZT', completed: false, optional: true },
-            { id: 'terraform-iac', label: 'Infrastructure as Code (Terraform) implemented', completed: false, optional: true },
+            { id: 'terraform-iac', label: 'Infrastructure as Code (Terraform) implemented for Zero Trust', completed: false, optional: true },
+            { id: 'terraform-repo-reviewed', label: 'Zero Trust Terraform demo repository ("terraform-cloudflare-zero-trust-demo") reviewed', completed: false, optional: true },
             { id: 'monitoring-dashboards', label: 'Monitoring dashboards created (Grafana/Prometheus)', completed: false, optional: true },
         ],
         documentation: [
             'https://developers.cloudflare.com/cloudflare-one/insights/analytics/',
             'https://developers.cloudflare.com/cloudflare-one/insights/logs/logpush/',
             'https://developers.cloudflare.com/terraform/cloudflare-one/',
+            'https://github.com/macharpe/terraform-cloudflare-zero-trust-demo',
             'https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/downloads/update-cloudflared/',
         ],
         dashboardLink: 'https://one.dash.cloudflare.com/?to=/:account/insights/analytics',
