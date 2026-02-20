@@ -1,18 +1,29 @@
-# Cloudflare Zero-Downtime Migration Guide
+# Cloudflare Onboarding Guides
 
-Interactive TypeScript guide for migrating domains to Cloudflare with zero downtime using Partial (CNAME) Setup. Built as a Cloudflare Worker with static assets.
+Interactive TypeScript guides for onboarding to Cloudflare products. Built as a Cloudflare Worker with static assets.
+
+**Currently available:**
+- **Application Services** - Zero-Downtime Domain Migration (Partial → Full Setup)
 
 ## Project Structure
 
 ```
 .
 ├── src/
-│   ├── index.ts              # Worker entry point (API routes)
+│   ├── index.ts              # Worker entry point (routing & API)
 │   ├── migration-steps.ts    # Migration workflow definitions
-│   └── types.ts              # TypeScript type definitions
+│   ├── types.ts              # TypeScript type definitions
+│   └── guides/
+│       ├── index.ts          # Guides module exports
+│       ├── types.ts          # Guide type definitions
+│       ├── registry.ts       # Guide categories registry
+│       └── application-services/
+│           └── zero-downtime-migration.ts
 ├── public/
-│   ├── index.html            # Main HTML structure
+│   ├── index.html            # Landing page (homepage)
+│   ├── guide.html            # Guide page template
 │   ├── styles.css            # Application styles
+│   ├── landing.css           # Landing page styles
 │   └── scripts.js            # Frontend logic
 ├── wrangler.jsonc            # Worker configuration
 ├── package.json              # Dependencies and scripts
@@ -22,10 +33,14 @@ Interactive TypeScript guide for migrating domains to Cloudflare with zero downt
 
 ### Architecture
 
-- **Backend**: Cloudflare Worker serving API endpoints (`/api/steps`, `/api/documentation`)
+- **Backend**: Cloudflare Worker with routing for landing page, guides, and API endpoints
 - **Frontend**: Vanilla JavaScript SPA with step-based workflow
 - **State**: Browser localStorage for checkpoint persistence
 - **Assets**: Static files served via Workers Assets binding
+- **Routing**:
+  - `/` → Landing page with guide categories
+  - `/guide/:slug` → Individual guide pages
+  - `/api/*` → JSON API endpoints
 
 ## Migration Workflow
 
@@ -52,6 +67,8 @@ Each step includes required/optional checkpoints, descriptions, and links to off
 
 ## API Endpoints
 
+- `GET /api/guides` - Returns all guide categories and metadata
+- `GET /api/guides/:slug` - Returns specific guide metadata
 - `GET /api/steps` - Returns all migration steps with checkpoints
 - `GET /api/documentation` - Returns categorized documentation links
 
@@ -83,8 +100,8 @@ dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records'
 
 **Progress Bar:** Edit `public/scripts.js` to exclude steps from progress bar progression that only have optional checkpoints, like step 15.
 
-# Disclaimer
+## Disclaimer
 
-This tool is provided for educational and informational purposes only. 
+**This is an unofficial third-party tool and is NOT associated with or endorsed by Cloudflare.**
 
-It is the user's responsibility to thoroughly review all configurations, verify DNS records, and validate SSL/TLS certificates before and after migration. Always test in non-production / staging environments first. The authors assume no liability for any issues arising from the use of this guide.
+This tool is provided for educational and informational purposes only. It is the user's responsibility to thoroughly review all configurations, verify DNS records, and validate SSL/TLS certificates before and after migration. Always test in non-production/staging environments first. The authors assume no liability for any issues arising from the use of this guide.

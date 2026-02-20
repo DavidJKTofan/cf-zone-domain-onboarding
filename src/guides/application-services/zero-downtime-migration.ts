@@ -1,11 +1,12 @@
-// src/migration-steps.ts
-import type { MigrationStep } from './types';
+// src/guides/application-services/zero-downtime-migration.ts
+
+import type { MigrationStep } from '../../types';
 
 /**
  * Migration steps for zero-downtime Cloudflare domain migration
  * using Partial (CNAME) Setup transitioning to Full Setup
  */
-export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
+export const ZERO_DOWNTIME_MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
     {
         id: 'preparation',
         title: 'Migration Preparation & Rollback Strategy',
@@ -42,7 +43,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/manage-domains/add-site/',
             'https://developers.cloudflare.com/dns/zone-setups/partial-setup/',
         ],
-        images: ['/img/application-services/step-1-add-zone.png'],
+        images: ['img/step-1-add-zone.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/add-site',
         phase: 1,
         phaseTitle: 'Partial Setup (Testing)',
@@ -58,7 +59,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'txt-record-noted', label: 'Verification TXT record details saved', completed: false, optional: false },
         ],
         documentation: ['https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/#1-convert-your-zone-and-review-dns-records'],
-        images: ['/img/application-services/step-2-convert-partial.png'],
+        images: ['img/step-2-convert-partial.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/settings/convert-zone',
         phase: 1,
         phaseTitle: 'Partial Setup (Testing)',
@@ -78,7 +79,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/user-profiles/verify-email-address/',
             'https://developers.cloudflare.com/dns/zone-setups/reference/domain-status/'
         ],
-        images: ['/img/application-services/step-3-verify-ownership.png'],
+        images: ['img/step-3-verify-ownership.png'],
         phase: 1,
         phaseTitle: 'Partial Setup (Testing)',
     },
@@ -100,7 +101,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/ssl/edge-certificates/custom-certificates/uploading/',
             'https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/',
         ],
-        images: ['/img/application-services/step-4-configure-ssl.png'],
+        images: ['img/step-4-configure-ssl.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/ssl-tls/edge-certificates',
         phase: 1,
         phaseTitle: 'Partial Setup (Testing)',
@@ -125,7 +126,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/cache/',
             'https://developers.cloudflare.com/rules/',
         ],
-        images: ['/img/application-services/step-5-configure-dns.png'],
+        images: ['img/step-5-configure-dns.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/records',
         phase: 1,
         phaseTitle: 'Partial Setup (Testing)',
@@ -188,7 +189,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/',
             'https://developers.cloudflare.com/resources/?filter-pcx_content_type=learning-path&filter-pcx_content_type=tutorial&filter-pcx_content_type=video'
         ],
-        images: ['/img/application-services/step-8-iterate-config.png'],
+        images: ['img/step-8-iterate-config.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/security/settings',
         phase: 1,
         phaseTitle: 'Partial Setup (Testing)',
@@ -210,7 +211,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/dns/zone-setups/full-setup/',
             'https://developers.cloudflare.com/dns/proxy-status/'
         ],
-        images: ['/img/application-services/step-10-convert-full.png'],
+        images: ['img/step-10-convert-full.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns/settings',
         phase: 2,
         phaseTitle: 'Full Setup Migration (Live)',
@@ -290,7 +291,7 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/',
             'https://developers.cloudflare.com/fundamentals/reference/http-headers/#cf-ray',
         ],
-        images: ['/img/application-services/step-13-enable-proxy.png'],
+        images: ['img/step-13-enable-proxy.png'],
         dashboardLink: 'https://dash.cloudflare.com/?to=/:account/:zone/dns',
         phase: 3,
         phaseTitle: 'Enable Proxy & Automation',
@@ -348,3 +349,15 @@ export const MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         phaseTitle: 'Enable Proxy & Automation',
     },
 ];
+
+export const GUIDE_METADATA = {
+    id: 'zero-downtime-migration',
+    slug: 'zero-downtime-migration',
+    title: 'Zero-Downtime Domain Migration',
+    shortTitle: 'Domain Migration',
+    description: 'Migrate your domain to Cloudflare with zero downtime using Partial (CNAME) Setup transitioning to Full Setup.',
+    category: 'application-services' as const,
+    status: 'available' as const,
+    estimatedDuration: '2-4 hours',
+    version: '1.0.0',
+};

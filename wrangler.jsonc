@@ -6,13 +6,16 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "cf-zone-domain-onboarding",
 	"main": "src/index.ts",
-	"compatibility_date": "2025-12-10",
+	// Keep compatibility date current per Workers best practices
+	"compatibility_date": "2026-02-20",
 	"compatibility_flags": [
-		"global_fetch_strictly_public"
+		"nodejs_compat"
 	],
 	"assets": {
-		// The path to the directory containing the `index.html` file to be served at `/`
-		"directory": "./public"
+		// index.html (landing page) is served at root `/`
+		// guide.html is served via Worker routing at `/guide/:slug`
+		"directory": "./public",
+		"binding": "ASSETS"
 	},
 	"observability": {
 		"enabled": true

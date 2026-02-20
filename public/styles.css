@@ -83,6 +83,26 @@ header::before {
     gap: 16px;
 }
 
+.back-to-home {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+    transition: color var(--transition);
+}
+
+.back-to-home:hover {
+    color: var(--cf-orange);
+}
+
+.back-to-home svg {
+    width: 18px;
+    height: 18px;
+}
+
 .header-text h1 {
     font-size: 1.75rem;
     font-weight: 700;
@@ -95,6 +115,17 @@ header::before {
     opacity: 0.85;
     font-weight: 400;
     margin-bottom: 8px;
+}
+
+.version-badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.625rem;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-weight: 500;
 }
 
 .header-description {

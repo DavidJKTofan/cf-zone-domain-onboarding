@@ -1,44 +1,89 @@
 // src/index.ts
-import type { Env, MigrationStep, StepsResponse, DocumentationResponse } from './types';
+import type { Env, MigrationStep } from './types';
 import { MIGRATION_STEPS } from './migration-steps';
+import { GUIDE_CATEGORIES, getGuideBySlug } from './guides';
+
+// Response headers for JSON API endpoints
+const JSON_HEADERS: HeadersInit = {
+	'Content-Type': 'application/json',
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Methods': 'GET, OPTIONS',
+	'Access-Control-Allow-Headers': 'Content-Type',
+};
 
 export default {
 	async fetch(request: Request, env: Env): Promise<Response> {
 		const url = new URL(request.url);
+
+		// Handle CORS preflight
+		if (request.method === 'OPTIONS') {
+			return new Response(null, { headers: JSON_HEADERS });
+		}
 
 		// API endpoints
 		if (url.pathname.startsWith('/api/')) {
 			return handleApiRequest(url, request);
 		}
 
-		// Serve static assets
+		// Route: Guide pages - serve guide.html for available guides
+		if (url.pathname.startsWith('/guide/')) {
+			const guideSlug = url.pathname.replace('/guide/', '').replace(/\/$/, '');
+			const guide = getGuideBySlug(guideSlug);
+
+			if (guide && guide.status === 'available') {
+				// Rewrite URL to serve guide.html using assets binding
+				return env.ASSETS.fetch(new URL('/guide.html', request.url));
+			}
+
+			return Response.json(
+				{ error: 'Guide not found' },
+				{ status: 404, headers: JSON_HEADERS }
+			);
+		}
+
+		// Serve static assets (index.html is landing page at root)
 		return env.ASSETS.fetch(request);
 	},
 } satisfies ExportedHandler<Env>;
 
-async function handleApiRequest(url: URL, request: Request): Promise<Response> {
-	const headers = {
-		'Content-Type': 'application/json',
-		'Access-Control-Allow-Origin': '*',
-		'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-		'Access-Control-Allow-Headers': 'Content-Type',
-	};
-
-	if (request.method === 'OPTIONS') {
-		return new Response(null, { headers });
+function handleApiRequest(url: URL, request: Request): Response {
+	// Only allow GET requests for API endpoints
+	if (request.method !== 'GET') {
+		return Response.json(
+			{ error: 'Method not allowed' },
+			{ status: 405, headers: JSON_HEADERS }
+		);
 	}
 
 	// GET /api/steps - return migration steps
-	if (url.pathname === '/api/steps' && request.method === 'GET') {
+	if (url.pathname === '/api/steps') {
 		const steps: MigrationStep[] = MIGRATION_STEPS.map((step) => ({
 			...step,
 			status: 'pending',
 		}));
-		return new Response(JSON.stringify({ steps }), { headers });
+		return Response.json({ steps }, { headers: JSON_HEADERS });
+	}
+
+	// GET /api/guides - return guides registry
+	if (url.pathname === '/api/guides') {
+		return Response.json({ categories: GUIDE_CATEGORIES }, { headers: JSON_HEADERS });
+	}
+
+	// GET /api/guides/:slug - return specific guide metadata
+	const guideMatch = url.pathname.match(/^\/api\/guides\/([a-z0-9-]+)$/);
+	if (guideMatch) {
+		const guide = getGuideBySlug(guideMatch[1]);
+		if (guide) {
+			return Response.json(guide, { headers: JSON_HEADERS });
+		}
+		return Response.json(
+			{ error: 'Guide not found' },
+			{ status: 404, headers: JSON_HEADERS }
+		);
 	}
 
 	// GET /api/documentation - return documentation links
-	if (url.pathname === '/api/documentation' && request.method === 'GET') {
+	if (url.pathname === '/api/documentation') {
 		const documentation = {
 			general: [
 				'https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/',
@@ -57,11 +102,11 @@ async function handleApiRequest(url: URL, request: Request): Promise<Response> {
 			],
 			proxy: ['https://developers.cloudflare.com/dns/proxy-status/'],
 		};
-		return new Response(JSON.stringify(documentation), { headers });
+		return Response.json(documentation, { headers: JSON_HEADERS });
 	}
 
-	return new Response(JSON.stringify({ error: 'Not found' }), {
-		status: 404,
-		headers,
-	});
+	return Response.json(
+		{ error: 'Not found' },
+		{ status: 404, headers: JSON_HEADERS }
+	);
 }

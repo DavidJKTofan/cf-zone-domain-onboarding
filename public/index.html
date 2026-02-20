@@ -4,76 +4,154 @@
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Cloudflare Zero-Downtime Migration Guide</title>
+	<title>Cloudflare Onboarding Guides</title>
 	<meta name="description"
-		content="Domain migration checklist for Cloudflare with zero downtime using Partial (CNAME) Setup to Full Setup" />
+		content="Interactive onboarding guides for Cloudflare products: Application Services, Cloudflare One, and Developer Platform" />
 	<link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="landing.css">
 </head>
 
-<body>
-	<header>
+<body class="landing-page">
+	<header class="landing-header">
 		<div class="container">
-			<div class="header-content">
-				<div class="header-text">
-					<h1>Cloudflare Zero-Downtime Migration</h1>
-					<p class="header-subtitle">Domain migration checklist with Partial (CNAME) Setup to Full Setup</p>
-					<p class="header-description">This interactive guide helps you safely migrate your domain to Cloudflare with zero downtime. Test configurations before making DNS changes, then transition to full Cloudflare management with confidence.</p>
-				</div>
-				<button class="btn-reset-header" onclick="guide.resetMigration()" title="Reset all progress">
-					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-						stroke-width="2">
-						<path stroke-linecap="round" stroke-linejoin="round"
-							d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+			<div class="landing-header-content">
+				<div class="landing-logo">
+					<svg class="cf-logo" viewBox="0 0 109 40" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+						<path d="M86.8 28.5c.3-.9.2-1.7-.3-2.3-.4-.5-1.1-.8-1.9-.9l-16.2-.2c-.1 0-.2-.1-.3-.1-.1-.1-.1-.2 0-.3.1-.2.2-.3.4-.3l16.4-.2c2.3-.1 4.8-2 5.6-4.3l1-3.1c.1-.2.1-.4 0-.5-1.3-6-6.6-10.4-12.9-10.4-7.1 0-13 5.4-13.6 12.3-.9-.6-2-.9-3.3-.9-2.5 0-4.6 1.8-5.1 4.1-4.4.4-7.8 4.1-7.8 8.5 0 .4 0 .8.1 1.2 0 .2.2.4.4.4h36.3c.2 0 .4-.1.5-.3l.7-2.7z"/>
+						<path d="M94.3 15.8c-.3 0-.5.2-.6.5l-.6 2.5c-.3.9-.2 1.7.3 2.3.4.5 1.1.8 1.9.9l4.1.2c.1 0 .2.1.3.1.1.1.1.2 0 .3-.1.2-.2.3-.4.3l-4.3.2c-2.3.1-4.8 2-5.6 4.3l-.3.9c-.1.2 0 .4.2.4h17.7c.2 0 .4-.1.4-.3.2-.8.3-1.6.3-2.4 0-5.3-4.3-9.6-9.6-9.6-1.3 0-2.6.3-3.8.8z"/>
 					</svg>
-					Reset All
-				</button>
+					<span class="logo-text">Onboarding Guides</span>
+				</div>
 			</div>
 		</div>
 	</header>
 
-	<main>
+	<main class="landing-main">
 		<div class="container">
-			<div class="progress-bar">
-				<div class="progress-header">
-					<div class="progress-info">
-						<span class="progress-text" id="progress-text">Step 1 of 13</span>
+			<section class="hero">
+				<h1>Cloudflare Onboarding Guides</h1>
+				<p class="hero-description">
+					Interactive step-by-step guides to help you onboard, configure, and optimize your Cloudflare products.
+					Select a product category below to get started.
+				</p>
+			</section>
+
+			<section class="categories-grid">
+				<!-- Application Services -->
+				<article class="category-card available" data-category="application-services">
+					<div class="category-icon application-services">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<circle cx="12" cy="12" r="10"></circle>
+							<line x1="2" y1="12" x2="22" y2="12"></line>
+							<path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+						</svg>
 					</div>
-					<span class="progress-percentage" id="progress-percentage">0%</span>
-				</div>
-				<div class="progress-track">
-					<div class="progress-fill" id="progress-fill"></div>
-				</div>
-			</div>
-
-			<div class="steps-container">
-				<aside class="steps-sidebar">
-					<nav class="step-nav">
-						<div class="step-nav-header">
-							<h3>Migration Steps</h3>
+					<div class="category-content">
+						<h2>Application Services</h2>
+						<p>CDN, DNS, SSL/TLS, WAF, DDoS protection, and performance optimization for web applications.</p>
+						<div class="category-guides">
+							<div class="guide-item available">
+								<a href="/guide/zero-downtime-migration" class="guide-link">
+									<span class="guide-title">Zero-Downtime Domain Migration</span>
+									<span class="guide-meta">
+										<span class="guide-duration">2-4 hours</span>
+										<span class="guide-status available">Available</span>
+									</span>
+								</a>
+							</div>
 						</div>
-						<div class="step-nav-list" id="step-nav-list"></div>
-					</nav>
-				</aside>
+					</div>
+					<div class="category-badge available">
+						<span>1 Guide Available</span>
+					</div>
+				</article>
 
-				<section class="step-content">
-					<div id="step-container"></div>
-				</section>
-			</div>
+				<!-- Cloudflare One -->
+				<article class="category-card coming-soon" data-category="cloudflare-one">
+					<div class="category-icon cloudflare-one">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+						</svg>
+					</div>
+					<div class="category-content">
+						<h2>Cloudflare One</h2>
+						<p>SASE platform combining Zero Trust security with network connectivity services including Access, Gateway, and Tunnel.</p>
+						<div class="category-guides empty">
+							<div class="coming-soon-message">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="12" r="10"></circle>
+									<polyline points="12 6 12 12 16 14"></polyline>
+								</svg>
+								<span>Guides coming soon</span>
+							</div>
+						</div>
+					</div>
+					<div class="category-badge coming-soon">
+						<span>Work in Progress</span>
+					</div>
+				</article>
+
+				<!-- Developer Platform -->
+				<article class="category-card coming-soon" data-category="developer-platform">
+					<div class="category-icon developer-platform">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+							<polyline points="16 18 22 12 16 6"></polyline>
+							<polyline points="8 6 2 12 8 18"></polyline>
+						</svg>
+					</div>
+					<div class="category-content">
+						<h2>Developer Platform</h2>
+						<p>Build and deploy serverless applications with Workers, Pages, R2, D1, Durable Objects, and more.</p>
+						<div class="category-guides empty">
+							<div class="coming-soon-message">
+								<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+									<circle cx="12" cy="12" r="10"></circle>
+									<polyline points="12 6 12 12 16 14"></polyline>
+								</svg>
+								<span>Guides coming soon</span>
+							</div>
+						</div>
+					</div>
+					<div class="category-badge coming-soon">
+						<span>Work in Progress</span>
+					</div>
+				</article>
+			</section>
+
+			<section class="info-section">
+				<div class="info-card">
+					<h3>About These Guides</h3>
+					<p>
+						These interactive guides provide step-by-step checklists with progress tracking, 
+						documentation links, and best practices for Cloudflare onboarding. Progress is saved 
+						locally in your browser.
+					</p>
+				</div>
+				<div class="info-card">
+					<h3>Contributing</h3>
+					<p>
+						Have suggestions for new guides or improvements? Visit our 
+						<a href="https://github.com/DavidJKTofan/cf-zone-domain-onboarding" target="_blank" rel="noopener">GitHub repository</a> 
+						to contribute or submit feedback.
+					</p>
+				</div>
+			</section>
 		</div>
 	</main>
 
-	<footer>
+	<footer class="landing-footer">
 		<div class="container">
 			<div class="footer-content">
 				<p class="footer-disclaimer">
-					<strong>Disclaimer:</strong> This tool is provided for educational and informational purposes only.
-					It is the user's responsibility to thoroughly review all configurations, verify DNS records, and
-					validate
-					SSL/TLS certificates before and after migration. Always test in a non-production environment first.
-					The authors assume no liability for any issues arising from the use of this guide.
+					<strong>Disclaimer:</strong> This is an unofficial third-party tool and is NOT associated with or endorsed by Cloudflare.
+					These guides are provided for educational and informational purposes only.
+					Always review configurations and test in non-production environments before applying changes.
 				</p>
 				<div class="footer-links">
-					<a href="https://github.com/DavidJKTofan/cf-zone-domain-onboarding" target="_blank" rel="noopener" class="github-link">
+					<a href="https://developers.cloudflare.com" target="_blank" rel="noopener" class="footer-link">
+						Cloudflare Docs
+					</a>
+					<a href="https://github.com/DavidJKTofan/cf-zone-domain-onboarding" target="_blank" rel="noopener" class="footer-link github-link">
 						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
 							<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
 						</svg>
@@ -83,8 +161,6 @@
 			</div>
 		</div>
 	</footer>
-
-	<script src="scripts.js"></script>
 </body>
 
 </html>
