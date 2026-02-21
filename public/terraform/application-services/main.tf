@@ -1,7 +1,7 @@
 # Cloudflare Application Services - Main Configuration (Provider v5)
 # This configuration aligns with the Zero-Downtime Domain Migration Guide
 #
-# IMPORTANT: This uses Cloudflare Terraform Provider v5 (v5.17.0+)
+# IMPORTANT: This uses Cloudflare Terraform Provider v5 (v5.5.0+)
 # v5 has breaking changes from v4 - see migration guide:
 # https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-upgrade
 #
@@ -15,6 +15,8 @@
 # - Use API tokens (not global API key) with minimal required permissions
 # - Store credentials in environment variables, not in config files
 # - Use remote state backend for team collaboration
+# - Manage resources in Terraform only - avoid dashboard/API changes
+# - Use locals for reusable values (ruleset IDs, etc.)
 
 terraform {
   required_version = ">= 1.0"
@@ -22,7 +24,7 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5" # Use latest v5.x (currently v5.17.0+)
+      version = "~> 5" # Use v5.x - pin specific version for production (e.g., "5.5.0")
     }
   }
 
@@ -46,6 +48,18 @@ provider "cloudflare" {
   # api_token is read from CLOUDFLARE_API_TOKEN environment variable
   # Uncomment below only for local development (never commit with token!)
   # api_token = var.cloudflare_api_token
+}
+
+# =============================================================================
+# LOCAL VALUES
+# Best practice: Use locals for reusable values like managed ruleset IDs
+# =============================================================================
+
+locals {
+  # Cloudflare Managed Ruleset IDs (these are global constants)
+  managed_ruleset_id     = "efb7b8c949ac4650a09736fc376e9aee" # Cloudflare Managed Ruleset
+  owasp_ruleset_id       = "4814384a9e5d4991b9815dcfc25d2f1f" # OWASP Core Ruleset
+  owasp_anomaly_score_id = "6179ae15870a4bb7b2d480d4843b323c" # OWASP Anomaly Score rule
 }
 
 # =============================================================================

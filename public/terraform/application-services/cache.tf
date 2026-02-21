@@ -7,15 +7,17 @@
 
 # =============================================================================
 # TIERED CACHE
-# v5: cache_type → value
+# v5: cache_type → value, accepts "on" or "off" string
 # =============================================================================
 
 resource "cloudflare_tiered_cache" "main" {
   count = var.enable_tiered_cache ? 1 : 0
 
   zone_id = data.cloudflare_zone.main.zone_id
-  value   = "on" # v5: value must be "on" or "off"
+  value   = "on" # v5: accepts "on" or "off" (not boolean)
 }
+
+# Note: For Smart Tiered Cache (Enterprise), use value = "smart"
 
 # =============================================================================
 # CACHE RULES (Examples - uncomment and customize)

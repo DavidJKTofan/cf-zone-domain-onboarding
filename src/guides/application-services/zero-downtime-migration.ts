@@ -11,10 +11,11 @@ export const ZERO_DOWNTIME_MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'preparation',
         title: 'Migration Preparation & Rollback Strategy',
         description:
-            'Before starting the migration, prepare your rollback strategy, backup DNS records, plan monitoring, and communicate with stakeholders. Keep legacy DNS active for 7-14 days post-cutover to facilitate potential rollback.',
+            'Before starting the migration, prepare your rollback strategy, backup DNS records, plan monitoring, and communicate with stakeholders. Keep legacy DNS active for 7-14 days post-cutover to facilitate potential rollback. For multi-zone migrations, use a crawl/walk/run approach: start with test domains, then low-risk domains, then critical domains.',
         estimatedTime: '30 minutes - 2 hours',
         checkpoints: [
-            { id: 'dns-backup-created', label: 'All DNS records exported and backed up from current provider', completed: false, optional: false },
+            { id: 'zone-inventory', label: 'Zone inventory documented (owner, registrar, expiry, criticality, migration status)', completed: false, optional: true },
+            { id: 'dns-backup-created', label: 'All DNS records exported and backed up from current provider (BIND format)', completed: false, optional: false },
             { id: 'rollback-plan', label: 'Rollback procedure documented (revert nameservers to original)', completed: false, optional: false },
             { id: 'grace-period-planned', label: 'Grace period scheduled (keep legacy DNS active 7-14 days post-migration)', completed: false, optional: false },
             { id: 'monitoring-strategy', label: 'Monitoring strategy defined (uptime, DNS, SSL, application health)', completed: false, optional: false },
@@ -32,11 +33,12 @@ export const ZERO_DOWNTIME_MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'add-zone',
         title: 'Add Zone to Cloudflare',
         description:
-            'Add your domain to Cloudflare. Partial (CNAME) Setup requires a Business or Enterprise plan. This setup allows you to use Cloudflare on specific subdomains while keeping your existing DNS provider.',
+            'Add your domain to Cloudflare. Partial (CNAME) Setup requires a Business or Enterprise plan. This setup allows you to use Cloudflare on specific subdomains while keeping your existing DNS provider. Note: Zones remain in pending state for 45 days before being removed - complete the migration within this window.',
         estimatedTime: '5 minutes',
         checkpoints: [
             { id: 'zone-added', label: 'Domain added to Cloudflare account', completed: false, optional: false },
             { id: 'plan-selected', label: 'Business or Enterprise plan selected (required for Partial Setup)', completed: false, optional: false },
+            { id: 'pending-deadline-noted', label: 'Migration deadline noted (45 days from zone creation)', completed: false, optional: true },
         ],
         documentation: [
             'https://developers.cloudflare.com/fundamentals/account/create-account/',
@@ -146,7 +148,7 @@ export const ZERO_DOWNTIME_MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/fundamentals/security/protect-your-origin-server/',
             'https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/',
             'https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/',
-            'https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/',
+            'https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/',
             'https://developers.cloudflare.com/ssl/origin-configuration/ssl-modes/'
         ],
         phase: 1,
@@ -260,7 +262,8 @@ export const ZERO_DOWNTIME_MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
         estimatedTime: '5-10 minutes + propagation time',
         checkpoints: [
             { id: 'dns-records-verified', label: 'All DNS records verified and in place', completed: false, optional: false },
-            { id: 'nameservers-updated', label: 'Cloudflare nameservers added at registrar', completed: false, optional: false },
+            { id: 'nameservers-updated', label: 'Cloudflare nameservers added at registrar (copy exactly, avoid typos)', completed: false, optional: false },
+            { id: 'dns-cache-flushed', label: 'DNS cache flushed (dns.google/cache, one.one.one.one/purge-cache)', completed: false, optional: true },
             { id: 'dns-propagated', label: 'DNS propagation confirmed (dig checks)', completed: false, optional: false },
             { id: 'zone-active', label: 'Zone status changed to Active in Cloudflare', completed: false, optional: false },
         ],

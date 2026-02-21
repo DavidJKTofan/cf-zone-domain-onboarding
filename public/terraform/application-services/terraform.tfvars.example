@@ -1,32 +1,34 @@
-# Cloudflare Application Services - Example Variables (Provider v5.17.0+)
+# Cloudflare Application Services - Example Variables (Provider v5.5.0+)
 # Copy this file to terraform.tfvars and customize for your environment
 #
 # IMPORTANT SECURITY NOTES:
 # 1. Add terraform.tfvars to your .gitignore file!
 # 2. Never commit credentials to version control
-# 3. Prefer using environment variables for API tokens:
+# 3. Use environment variable for API token (REQUIRED):
 #    export CLOUDFLARE_API_TOKEN="your-token-here"
 #
 # v5 MIGRATION NOTES:
 # - DNS records: 'value' is now 'content', 'name' must be full FQDN
 # - Zone settings: Individual cloudflare_zone_setting resources replace cloudflare_zone_settings_override
 # - Rulesets: Block syntax { } changed to object syntax = { } or list = [{ }]
+# - WAF: Create ONE entrypoint ruleset with multiple rules (not separate resources)
 #
 # Reference: https://developers.cloudflare.com/terraform/advanced-topics/best-practices/
 
 # =============================================================================
-# AUTHENTICATION (Recommended: use environment variable instead)
+# AUTHENTICATION
 # =============================================================================
 
-# RECOMMENDED: Set the API token via environment variable:
+# Set the API token via environment variable (REQUIRED - do not store in files):
 #   export CLOUDFLARE_API_TOKEN="your-api-token-here"
 #
 # Create API token at: https://dash.cloudflare.com/profile/api-tokens
-# Required permissions: Zone:Zone:Read, Zone:DNS:Edit, Zone:WAF:Edit,
-#                       Zone:Zone Settings:Edit, Zone:SSL and Certificates:Edit
-#
-# Only uncomment below if you cannot use environment variables:
-# cloudflare_api_token = "your-api-token-here"
+# Required permissions:
+#   - Zone:Zone:Read
+#   - Zone:DNS:Edit
+#   - Zone:WAF:Edit
+#   - Zone:Zone Settings:Edit
+#   - Zone:SSL and Certificates:Edit
 
 # Cloudflare Account ID
 # Find at: https://dash.cloudflare.com/?to=/:account/

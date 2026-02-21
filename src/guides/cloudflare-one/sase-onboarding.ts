@@ -97,13 +97,15 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'global-settings',
         title: 'Configure Global Zero Trust Settings',
         description:
-            'Configure organization-wide settings including custom block pages, authentication domain, and logging preferences. These settings apply across all Zero Trust features and should be configured before creating policies.',
+            'Configure organization-wide settings including custom block pages, authentication domain, logging preferences, and security features. Best Practices: Set user seat expiration to 3 months, enable enhanced file detection, configure activity logs to capture all events. These settings apply across all Zero Trust features and should be configured before creating policies.',
         estimatedTime: '15-30 minutes',
         checkpoints: [
             { id: 'block-page-customized', label: 'Gateway block page customized with company branding', completed: false, optional: false },
             { id: 'access-block-page', label: 'Access block page customized for authentication failures', completed: false, optional: false },
             { id: 'auth-domain-configured', label: 'Authentication domain configured', completed: false, optional: false },
-            { id: 'logging-retention-set', label: 'Gateway Logs configured', completed: false, optional: false },
+            { id: 'logging-retention-set', label: 'Gateway Logs configured (capture all activity)', completed: false, optional: false },
+            { id: 'user-seat-expiration', label: 'User seat expiration configured (recommended: 3 months)', completed: false, optional: false },
+            { id: 'enhanced-file-detection', label: 'Enhanced file detection enabled', completed: false, optional: false },
             { id: 'support-url-configured', label: 'Custom support URL configured for user help', completed: false, optional: true },
         ],
         documentation: [
@@ -151,7 +153,7 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'warp-deployment',
         title: 'Deploy WARP Client to Devices',
         description:
-            'Configure device enrollment policies and deploy the Cloudflare WARP client. Best Practices: Use IdP groups + MFA for enrollment, configure device profiles per user type (remote, office, contractors), use Exclude mode with RFC1918 modifications, lock WARP switch in production, enable multi-user mode from start.',
+            'Configure device enrollment policies and deploy the Cloudflare WARP client. Best Practices: Use IdP groups + MFA for enrollment, configure device profiles per user type (remote, office, contractors), use Exclude mode with RFC1918 modifications, lock WARP switch in production, enable multi-user mode from start. For WARP-to-WARP: remove 100.64.0.0/10 from exclude list and add specific /12 ranges.',
         estimatedTime: '2-4 hours',
         checkpoints: [
             { id: 'enrollment-rules-created', label: 'Device enrollment rules with IdP groups and MFA requirement', completed: false, optional: false },
@@ -160,16 +162,18 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'root-cert-deployed', label: 'Cloudflare root certificate deployed to devices', completed: false, optional: false },
             { id: 'lock-warp-switch', label: 'Lock WARP switch enabled (production setting)', completed: false, optional: false },
             { id: 'warp-pilot-deployed', label: 'WARP client deployed to pilot users', completed: false, optional: false },
-            { id: 'managed-network-configured', label: 'Managed Network detection configured (IP-based, not FQDN)', completed: false, optional: true },
-            { id: 'mdm-integration', label: 'MDM integration configured (Intune, JAMF, etc.)', completed: false, optional: true },
+            { id: 'managed-network-configured', label: 'Managed Network detection configured (use IP+Port, not FQDN)', completed: false, optional: true },
+            { id: 'mdm-integration', label: 'MDM integration configured (Intune, JAMF, etc.) with allow_updates=false, onboarding=false', completed: false, optional: true },
             { id: 'multi-user-mode', label: 'Multi-user mode enabled for shared devices', completed: false, optional: true },
             { id: 'auto-connect-configured', label: 'Auto-connect configured with appropriate timeout', completed: false, optional: true },
+            { id: 'warp-to-warp-configured', label: 'WARP-to-WARP: 100.64.0.0/10 removed, specific /12 ranges added', completed: false, optional: true },
             { id: 'o365-direct-route', label: 'Office 365 direct routing enabled (if no tenant restrictions)', completed: false, optional: true },
         ],
         documentation: [
             'https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/',
             'https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/deployment/',
             'https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/warp/configure-warp/route-traffic/split-tunnels/',
+            'https://developers.cloudflare.com/cloudflare-one/team-and-resources/devices/user-side-certificates/',
             'https://developers.cloudflare.com/learning-paths/replace-vpn/configure-device-agent/',
         ],
         dashboardLink: 'https://one.dash.cloudflare.com/?to=/:account/settings/warp-client',
@@ -184,9 +188,10 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'gateway-dns',
         title: 'Configure Gateway DNS Policies',
         description:
-            'Set up DNS filtering policies to block malicious domains, restrict content categories, and control DNS resolution. Follow naming convention: <Source>-DNS-<Destination>-<Purpose>. Recommended order: 1) Whitelist trusted domains, 2) Block security categories, 3) Block content categories, 4) Block applications, 5) Block geo-restricted IPs.',
+            'Set up DNS filtering policies to block malicious domains, restrict content categories, and control DNS resolution. Follow naming convention: <Source>-<Protocol>-<Destination>-<Purpose> (e.g., "AllUsers-DNS-Malware-Block"). Recommended order: 1) Whitelist trusted domains, 2) Block security categories, 3) Block content categories, 4) Block applications, 5) Block geo-restricted IPs, 6) TLD blacklist, 7) Phishing regex, 8) IP blacklist, 9) Domain blacklist.',
         estimatedTime: '30 minutes - 1 hour',
         checkpoints: [
+            { id: 'policy-naming-convention', label: 'Policy naming convention applied: <Source>-<Protocol>-<Destination>-<Purpose>', completed: false, optional: false },
             { id: 'dns-whitelist-created', label: 'Corporate/trusted domains whitelist policy created (Priority 1)', completed: false, optional: false },
             { id: 'security-categories-blocked', label: 'All security threat categories blocked (malware, phishing, C2)', completed: false, optional: false },
             { id: 'content-categories-configured', label: 'Content filtering categories configured (Questionable, Security Risks)', completed: false, optional: false },
@@ -211,10 +216,11 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'gateway-network',
         title: 'Configure Gateway Network Policies',
         description:
-            'Create network-level policies to control TCP/UDP traffic to internal resources. Implement Zero Trust implicit deny: only explicitly allowed traffic reaches internal networks. Include quarantine policies for compromised users and posture-fail restrictions.',
+            'Create network-level policies to control TCP/UDP traffic to internal resources. Implement Zero Trust implicit deny: only explicitly allowed traffic reaches internal networks. Include quarantine policies for compromised users and posture-fail restrictions. Enable WARP-to-WARP connectivity with deny-by-default policies.',
         estimatedTime: '1-2 hours',
         checkpoints: [
             { id: 'proxy-tcp-udp-enabled', label: 'Gateway proxy enabled for TCP, UDP, and ICMP', completed: false, optional: false },
+            { id: 'warp-to-warp-enabled', label: 'WARP-to-WARP connectivity enabled (with deny-by-default policies)', completed: false, optional: true },
             { id: 'quarantine-policy', label: 'Quarantined users restriction policy created', completed: false, optional: false },
             { id: 'posture-fail-policy', label: 'Device posture fail restriction policy created', completed: false, optional: false },
             { id: 'internal-access-policies', label: 'Internal resource access policies created (per user group)', completed: false, optional: false },
@@ -306,9 +312,9 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'saas-apps-configured', label: 'SaaS application integrations configured', completed: false, optional: true },
         ],
         documentation: [
-            'https://developers.cloudflare.com/cloudflare-one/applications/',
-            'https://developers.cloudflare.com/cloudflare-one/applications/configure-apps/self-hosted-apps/',
-            'https://developers.cloudflare.com/cloudflare-one/identity/authorization-cookie/validating-json/',
+            'https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/',
+            'https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/',
+            'https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/authorization-cookie/validating-json/',
             'https://developers.cloudflare.com/reference-architecture/design-guides/designing-ztna-access-policies/',
             'https://developers.cloudflare.com/learning-paths/replace-vpn/build-policies/',
         ],
@@ -344,10 +350,11 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'warp-session-timeout',
         title: 'Configure WARP Session Timeout (Re-authentication)',
         description:
-            'Configure WARP session timeouts to require periodic re-authentication. Best Practice: Set 12-hour timeout for balance between security and UX. Exclude basic services (DNS, IdP, MDM) from timeout to ensure re-auth works properly.',
+            'Configure WARP session timeouts to require periodic re-authentication. Best Practice: Set 12-hour timeout for both WARP and global Access sessions for balance between security and UX. Exclude basic services (DNS, IdP, MDM) from timeout to ensure re-auth works properly.',
         estimatedTime: '30 minutes',
         checkpoints: [
-            { id: 'session-timeout-planned', label: 'Session timeout duration decided (recommended: 12 hours)', completed: false, optional: false },
+            { id: 'session-timeout-planned', label: 'WARP session timeout configured (recommended: 12 hours)', completed: false, optional: false },
+            { id: 'global-session-timeout', label: 'Global Access session timeout configured (recommended: 12 hours)', completed: false, optional: false },
             { id: 'basic-services-excluded', label: 'Basic services excluded from timeout (DNS, IdP, MDM, AD)', completed: false, optional: false },
             { id: 'timeout-policies-consistent', label: 'Same timeout applied across Network and HTTP policies', completed: false, optional: false },
             { id: 'internal-only-timeout', label: 'Timeout applied to internal resources only (not Internet)', completed: false, optional: true },
@@ -406,7 +413,7 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/cloudflare-one/remote-browser-isolation/',
             'https://developers.cloudflare.com/cloudflare-one/remote-browser-isolation/setup/',
             'https://developers.cloudflare.com/cloudflare-one/remote-browser-isolation/setup/clientless-browser-isolation/',
-            'https://developers.cloudflare.com/cloudflare-one/policies/access/isolate-application/',
+            'https://developers.cloudflare.com/cloudflare-one/access-controls/policies/isolate-application/',
         ],
         dashboardLink: 'https://one.dash.cloudflare.com/?to=/:account/gateway/http',
         phase: 5,

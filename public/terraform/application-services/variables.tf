@@ -1,25 +1,24 @@
 # Cloudflare Application Services - Variables (Provider v5)
 # Input variables for configuring Cloudflare resources
 #
-# Authentication Note:
-# We recommend using the CLOUDFLARE_API_TOKEN environment variable
-# instead of passing the token via terraform.tfvars
+# Authentication Best Practice:
+# Use the CLOUDFLARE_API_TOKEN environment variable for authentication.
+# DO NOT store API tokens in terraform.tfvars or any committed files.
 # See: https://developers.cloudflare.com/terraform/advanced-topics/best-practices/
+#
+# Required API Token Permissions:
+# - Zone:Zone:Read
+# - Zone:DNS:Edit
+# - Zone:WAF:Edit
+# - Zone:Zone Settings:Edit
+# - Zone:SSL and Certificates:Edit
 
 # =============================================================================
-# OPTIONAL AUTHENTICATION VARIABLE
-# Prefer using CLOUDFLARE_API_TOKEN environment variable instead
+# REQUIRED VARIABLES
 # =============================================================================
-
-variable "cloudflare_api_token" {
-  description = "Cloudflare API token (prefer CLOUDFLARE_API_TOKEN env var)"
-  type        = string
-  sensitive   = true
-  default     = "" # Use env var CLOUDFLARE_API_TOKEN instead
-}
 
 variable "cloudflare_account_id" {
-  description = "Cloudflare Account ID"
+  description = "Cloudflare Account ID (find at: dash.cloudflare.com)"
   type        = string
 }
 
