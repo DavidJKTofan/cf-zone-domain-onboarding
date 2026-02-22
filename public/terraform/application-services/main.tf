@@ -1,9 +1,16 @@
 # Cloudflare Application Services - Main Configuration (Provider v5)
-# This configuration aligns with the Zero-Downtime Domain Migration Guide
+# Enterprise-Optimized Configuration
 #
-# IMPORTANT: This uses Cloudflare Terraform Provider v5 (v5.5.0+)
+# This configuration aligns with the Zero-Downtime Domain Migration Guide
+# and implements Cloudflare Enterprise Best Practices.
+#
+# IMPORTANT: This uses Cloudflare Terraform Provider v5 (v5.17.0+)
 # v5 has breaking changes from v4 - see migration guide:
 # https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-upgrade
+#
+# DEPRECATION NOTES (v5.17+):
+# - 'minify' setting has been REMOVED - use CI/CD pipeline minification instead
+# - 'mirage' is deprecated - use Polish or Image Resizing instead
 #
 # Usage:
 #   1. Copy terraform.tfvars.example to terraform.tfvars
@@ -11,12 +18,15 @@
 #   3. Set CLOUDFLARE_API_TOKEN environment variable (recommended)
 #   4. Run: terraform init && terraform plan && terraform apply
 #
-# Best Practices:
+# Enterprise Best Practices:
 # - Use API tokens (not global API key) with minimal required permissions
 # - Store credentials in environment variables, not in config files
 # - Use remote state backend for team collaboration
 # - Manage resources in Terraform only - avoid dashboard/API changes
 # - Use locals for reusable values (ruleset IDs, etc.)
+# - SSL Mode: Always use "strict" for end-to-end encryption validation
+# - 0-RTT: Disable for security-sensitive sites (replay attack risk)
+# - Always Online: Disable for Enterprise (branded error pages preferred)
 
 terraform {
   required_version = ">= 1.0"
@@ -24,7 +34,7 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5" # Use v5.x - pin specific version for production (e.g., "5.5.0")
+      version = ">= 5.17" # Use v5.17+ - minify setting removed, zone_setting stabilized
     }
   }
 
@@ -107,10 +117,12 @@ resource "cloudflare_zone_setting" "always_use_https" {
 }
 
 # Automatic HTTPS Rewrites
+# Enterprise Note: OFF is recommended - better to fix mixed content at source/CMS
+# than rely on edge rewriting. Can hide bad coding practices.
 resource "cloudflare_zone_setting" "automatic_https_rewrites" {
   zone_id    = data.cloudflare_zone.main.zone_id
   setting_id = "automatic_https_rewrites"
-  value      = "on"
+  value      = var.automatic_https_rewrites ? "on" : "off"
 }
 
 # Security Level
@@ -148,11 +160,14 @@ resource "cloudflare_zone_setting" "http3" {
   value      = "on"
 }
 
-# 0-RTT
+# 0-RTT (Zero Round Trip Time Resumption)
+# ENTERPRISE SECURITY WARNING: 0-RTT is vulnerable to REPLAY ATTACKS
+# Must be OFF for banks, SaaS, login sites, or any security-sensitive applications
+# Only safe for static content sites (blogs, media)
 resource "cloudflare_zone_setting" "zero_rtt" {
   zone_id    = data.cloudflare_zone.main.zone_id
   setting_id = "0rtt"
-  value      = "on"
+  value      = var.enable_0rtt ? "on" : "off"
 }
 
 # WebSockets
@@ -170,10 +185,13 @@ resource "cloudflare_zone_setting" "browser_cache_ttl" {
 }
 
 # Always Online
+# ENTERPRISE BEST PRACTICE: OFF - A broken/archived site from Internet Archive
+# looks worse than a clean branded maintenance page for Enterprise brands.
+# Only enable for news/content sites that must stay up at all costs.
 resource "cloudflare_zone_setting" "always_online" {
   zone_id    = data.cloudflare_zone.main.zone_id
   setting_id = "always_online"
-  value      = "on"
+  value      = var.enable_always_online ? "on" : "off"
 }
 
 # Email Obfuscation
@@ -197,13 +215,59 @@ resource "cloudflare_zone_setting" "opportunistic_onion" {
   value      = "on"
 }
 
-# Minify (CSS, HTML, JS) - Note: v5 uses separate settings
-resource "cloudflare_zone_setting" "minify" {
+# =============================================================================
+# MINIFY SETTING - REMOVED IN TERRAFORM PROVIDER v5.17+
+# =============================================================================
+# The minify setting has been DEPRECATED by Cloudflare (as of 2024-08-05)
+# and REMOVED from the Terraform Provider v5.17+.
+#
+# ENTERPRISE BEST PRACTICE: Let your CI/CD pipeline handle minification.
+# Cloudflare modifying code breaks Subresource Integrity (SRI) hashes.
+#
+# Reference: https://developers.cloudflare.com/fundamentals/api/reference/deprecations/#2024-08-05
+# =============================================================================
+
+# =============================================================================
+# ENTERPRISE-SPECIFIC SETTINGS
+# =============================================================================
+
+# Origin Error Page Pass-Through (Enterprise)
+# Shows your branded error pages instead of generic Cloudflare errors
+# WARNING: Ensure your error pages don't leak stack traces!
+resource "cloudflare_zone_setting" "origin_error_page_pass_thru" {
+  count = var.enable_origin_error_page_pass_thru ? 1 : 0
+
   zone_id    = data.cloudflare_zone.main.zone_id
-  setting_id = "minify"
-  value = {
-    css  = "on"
-    html = "on"
-    js   = "on"
-  }
+  setting_id = "origin_error_page_pass_thru"
+  value      = "on"
+}
+
+# Sort Query String for Cache (Enterprise Performance)
+# Huge cache hit ratio win - treats ?b=1&a=2 same as ?a=2&b=1
+# Only disable if app logic explicitly depends on parameter order (rare)
+resource "cloudflare_zone_setting" "sort_query_string" {
+  count = var.enable_sort_query_string ? 1 : 0
+
+  zone_id    = data.cloudflare_zone.main.zone_id
+  setting_id = "sort_query_string_for_cache"
+  value      = "on"
+}
+
+# HTTP/2 (Enterprise Performance)
+# Essential for modern performance - multiplexing support
+resource "cloudflare_zone_setting" "http2" {
+  zone_id    = data.cloudflare_zone.main.zone_id
+  setting_id = "http2"
+  value      = "on"
+}
+
+# H2 Prioritization (Enterprise Performance)
+# Optimizes resource delivery order over HTTP/2
+# Improves Time to Interactive by sending CSS/JS before images
+resource "cloudflare_zone_setting" "h2_prioritization" {
+  count = var.enable_h2_prioritization ? 1 : 0
+
+  zone_id    = data.cloudflare_zone.main.zone_id
+  setting_id = "h2_prioritization"
+  value      = "on"
 }

@@ -1,4 +1,4 @@
-# Cloudflare Application Services - Example Variables (Provider v5.5.0+)
+# Cloudflare Application Services - Enterprise Configuration (Provider v5.17+)
 # Copy this file to terraform.tfvars and customize for your environment
 #
 # IMPORTANT SECURITY NOTES:
@@ -7,11 +7,18 @@
 # 3. Use environment variable for API token (REQUIRED):
 #    export CLOUDFLARE_API_TOKEN="your-token-here"
 #
-# v5 MIGRATION NOTES:
+# v5.17+ NOTES:
 # - DNS records: 'value' is now 'content', 'name' must be full FQDN
 # - Zone settings: Individual cloudflare_zone_setting resources replace cloudflare_zone_settings_override
 # - Rulesets: Block syntax { } changed to object syntax = { } or list = [{ }]
 # - WAF: Create ONE entrypoint ruleset with multiple rules (not separate resources)
+# - MINIFY REMOVED: Auto Minify deprecated and removed - use CI/CD pipeline instead
+#
+# ENTERPRISE BEST PRACTICES:
+# - SSL Mode: "strict" (validates origin certificate)
+# - 0-RTT: OFF (replay attack protection for security-sensitive sites)
+# - Always Online: OFF (branded error pages preferred over archived content)
+# - Automatic HTTPS Rewrites: OFF (fix mixed content at source)
 #
 # Reference: https://developers.cloudflare.com/terraform/advanced-topics/best-practices/
 
@@ -121,8 +128,9 @@ txt_records = [
 
 # SSL/TLS encryption mode
 # Options: "off", "flexible", "full", "strict"
-# Recommended: "strict" (requires valid certificate on origin)
-ssl_mode = "full"
+# ENTERPRISE: "strict" REQUIRED (validates origin certificate for end-to-end encryption)
+# Only use "full" temporarily if origin has self-signed cert that cannot be fixed immediately
+ssl_mode = "strict"
 
 # Minimum TLS version
 # Options: "1.0", "1.1", "1.2", "1.3"
@@ -161,3 +169,43 @@ enable_owasp_ruleset = true
 
 # Notification email (optional)
 notification_email = "admin@example.com"
+
+# =============================================================================
+# ENTERPRISE SECURITY SETTINGS
+# =============================================================================
+
+# 0-RTT (Zero Round Trip Time Resumption)
+# SECURITY WARNING: Vulnerable to replay attacks!
+# Must be OFF for banks, SaaS, login sites, or any security-sensitive applications
+# Only safe for static content sites (blogs, media)
+enable_0rtt = false
+
+# Always Online (serves cached pages from Internet Archive if origin is down)
+# ENTERPRISE RECOMMENDATION: OFF - branded error pages preferred over archived content
+# A broken/archived site looks worse than a clean maintenance page for Enterprise brands
+# Only enable for news/content sites that must stay up at all costs
+enable_always_online = false
+
+# Automatic HTTPS Rewrites (rewrites http links to https)
+# ENTERPRISE RECOMMENDATION: OFF - fix mixed content at source/CMS
+# This can hide bad coding practices; better to fix the root cause
+automatic_https_rewrites = false
+
+# =============================================================================
+# ENTERPRISE PERFORMANCE SETTINGS
+# =============================================================================
+
+# Origin Error Page Pass-Through
+# Shows your branded error pages instead of generic Cloudflare errors
+# WARNING: Ensure your error pages don't leak stack traces!
+enable_origin_error_page_pass_thru = true
+
+# Sort Query String for Cache
+# Huge cache hit ratio win - treats ?b=1&a=2 same as ?a=2&b=1
+# Only disable if app logic explicitly depends on parameter order (rare)
+enable_sort_query_string = true
+
+# HTTP/2 Prioritization
+# Optimizes resource delivery order, improving Time to Interactive
+# Sends CSS/JS before images for better perceived performance
+enable_h2_prioritization = true

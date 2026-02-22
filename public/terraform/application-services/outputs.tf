@@ -84,3 +84,16 @@ output "configuration_summary" {
     owasp_enabled   = var.enable_owasp_ruleset
   }
 }
+
+output "enterprise_settings_summary" {
+  description = "Summary of Enterprise-specific security and performance settings"
+  value = {
+    zero_rtt_enabled            = var.enable_0rtt
+    always_online_enabled       = var.enable_always_online
+    automatic_https_rewrites    = var.automatic_https_rewrites
+    origin_error_page_pass_thru = var.enable_origin_error_page_pass_thru
+    sort_query_string_for_cache = var.enable_sort_query_string
+    h2_prioritization           = var.enable_h2_prioritization
+    # Note: minify setting removed in Terraform Provider v5.17+
+  }
+}

@@ -1,5 +1,7 @@
-# Cloudflare Application Services - Variables (Provider v5)
-# Input variables for configuring Cloudflare resources
+# Cloudflare Application Services - Variables (Provider v5.17+)
+# Enterprise-Optimized Configuration
+#
+# Input variables for configuring Cloudflare resources with Enterprise best practices.
 #
 # Authentication Best Practice:
 # Use the CLOUDFLARE_API_TOKEN environment variable for authentication.
@@ -12,6 +14,13 @@
 # - Zone:WAF:Edit
 # - Zone:Zone Settings:Edit
 # - Zone:SSL and Certificates:Edit
+#
+# ENTERPRISE DEFAULTS:
+# - SSL Mode: "strict" (validates origin certificate)
+# - 0-RTT: disabled (replay attack protection)
+# - Always Online: disabled (branded error pages preferred)
+# - Automatic HTTPS Rewrites: disabled (fix at source)
+# - Minify: REMOVED in v5.17+ (use CI/CD pipeline)
 
 # =============================================================================
 # REQUIRED VARIABLES
@@ -32,9 +41,9 @@ variable "domain" {
 # =============================================================================
 
 variable "ssl_mode" {
-  description = "SSL/TLS encryption mode: off, flexible, full, strict"
+  description = "SSL/TLS encryption mode: off, flexible, full, strict. Enterprise default: strict"
   type        = string
-  default     = "full"
+  default     = "strict" # Enterprise: Always use strict for origin cert validation
 
   validation {
     condition     = contains(["off", "flexible", "full", "strict"], var.ssl_mode)
@@ -140,4 +149,48 @@ variable "notification_email" {
   description = "Email for notifications (optional)"
   type        = string
   default     = ""
+}
+
+# =============================================================================
+# ENTERPRISE SECURITY SETTINGS
+# =============================================================================
+
+variable "enable_0rtt" {
+  description = "Enable 0-RTT (Zero Round Trip Time Resumption). SECURITY WARNING: Vulnerable to replay attacks. Must be OFF for banks, SaaS, login sites. Only safe for static content."
+  type        = bool
+  default     = false # Enterprise default: OFF for security
+}
+
+variable "enable_always_online" {
+  description = "Enable Always Online (serves cached pages from Internet Archive if origin is down). Enterprise recommendation: OFF - branded error pages are preferred over archived content."
+  type        = bool
+  default     = false # Enterprise default: OFF for brand safety
+}
+
+variable "automatic_https_rewrites" {
+  description = "Enable Automatic HTTPS Rewrites (rewrites http links to https). Enterprise recommendation: OFF - fix mixed content at source/CMS rather than relying on edge rewriting."
+  type        = bool
+  default     = false # Enterprise default: OFF - fix at source
+}
+
+# =============================================================================
+# ENTERPRISE PERFORMANCE SETTINGS
+# =============================================================================
+
+variable "enable_origin_error_page_pass_thru" {
+  description = "Enable Origin Error Page Pass-Through. Shows your branded error pages instead of generic Cloudflare errors. WARNING: Ensure error pages don't leak stack traces."
+  type        = bool
+  default     = true # Enterprise default: ON for branding
+}
+
+variable "enable_sort_query_string" {
+  description = "Enable Sort Query String for Cache. Huge cache hit ratio win - treats disordered query params as same cache object. Only disable if app logic depends on parameter order."
+  type        = bool
+  default     = true # Enterprise default: ON for cache efficiency
+}
+
+variable "enable_h2_prioritization" {
+  description = "Enable HTTP/2 Prioritization. Optimizes resource delivery order, improving Time to Interactive by sending CSS/JS before images."
+  type        = bool
+  default     = true # Enterprise default: ON for performance
 }
