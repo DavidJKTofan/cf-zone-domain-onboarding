@@ -341,6 +341,7 @@ export const ZERO_DOWNTIME_MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'terraform-templates-downloaded', label: 'Terraform starter templates downloaded', completed: false, optional: true },
             { id: 'cf-terraforming-used', label: 'cf-terraforming used to export current configuration', completed: false, optional: true },
             { id: 'terraform-config-created', label: 'Terraform configuration files customized for your environment', completed: false, optional: true },
+            { id: 'terraform-restapi-provider', label: 'terraform-provider-restapi evaluated for non-native Cloudflare API resources', completed: false, optional: true },
             { id: 'cicd-pipeline-setup', label: 'CI/CD pipeline configured for automated deployments', completed: false, optional: true },
             { id: 'legacy-dns-decommissioned', label: 'Legacy DNS infrastructure decommissioned after grace period', completed: false, optional: true },
         ],
@@ -351,6 +352,7 @@ export const ZERO_DOWNTIME_MIGRATION_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs',
             'https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/guides/version-5-upgrade',
             'https://github.com/cloudflare/cf-terraforming',
+            'https://github.com/Mastercard/terraform-provider-restapi',
         ],
         terraformFiles: [
             { name: 'main.tf', description: 'Provider config, zone data source, zone settings', path: '/terraform/application-services/main.tf' },

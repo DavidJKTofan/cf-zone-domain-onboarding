@@ -527,6 +527,7 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
             { id: 'incident-response-updated', label: 'Incident response procedures updated for ZT', completed: false, optional: true },
             { id: 'terraform-iac', label: 'Infrastructure as Code (Terraform) implemented for Zero Trust', completed: false, optional: true },
             { id: 'terraform-repo-reviewed', label: 'Zero Trust Terraform demo repository ("terraform-cloudflare-zero-trust-demo") reviewed', completed: false, optional: true },
+            { id: 'terraform-restapi-provider', label: 'terraform-provider-restapi evaluated for non-native Cloudflare API resources', completed: false, optional: true },
             { id: 'monitoring-dashboards', label: 'Monitoring dashboards created (Grafana/Prometheus)', completed: false, optional: true },
         ],
         documentation: [
@@ -534,6 +535,7 @@ export const SASE_ONBOARDING_STEPS: Omit<MigrationStep, 'status'>[] = [
             'https://developers.cloudflare.com/cloudflare-one/insights/logs/logpush/',
             'https://developers.cloudflare.com/terraform/cloudflare-one/',
             'https://github.com/macharpe/terraform-cloudflare-zero-trust-demo',
+            'https://github.com/Mastercard/terraform-provider-restapi',
             'https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/downloads/update-cloudflared/',
         ],
         dashboardLink: 'https://one.dash.cloudflare.com/?to=/:account/insights/analytics',
