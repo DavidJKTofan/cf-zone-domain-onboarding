@@ -3,7 +3,9 @@
 Interactive TypeScript guides for onboarding to Cloudflare products. Built as a Cloudflare Worker with static assets, designed to be modular, scalable, and mobile-responsive.
 
 **Currently available:**
-- **Application Services** - Zero-Downtime Domain Migration (Partial to Full Setup)
+- **Application Services**
+  - Zero-Downtime Domain Migration (Partial to Full Setup)
+  - Cloudflare for SaaS & Custom Hostnames (vanity domains)
 - **Cloudflare One** - SASE & Zero Trust Onboarding (VPN replacement, SWG, ZTNA)
 
 ## Project Structure
@@ -19,7 +21,8 @@ Interactive TypeScript guides for onboarding to Cloudflare products. Built as a 
 │       ├── types.ts          # Guide type definitions
 │       ├── registry.ts       # Guide categories registry
 │       ├── application-services/
-│       │   └── zero-downtime-migration.ts
+│       │   ├── zero-downtime-migration.ts
+│       │   └── cloudflare-for-saas.ts
 │       └── cloudflare-one/
 │           └── sase-onboarding.ts
 ├── public/
@@ -96,14 +99,40 @@ The SASE onboarding guide covers 19 steps across 7 phases:
 19. **Production Rollout** - Phased deployment, user communication
 20. **Ongoing Operations** - Alerting, SIEM integration, Terraform
 
-## Application Services (Domain Migration) Guide
+## Application Services Guides
 
-The domain migration guide covers 15 steps across 4 phases:
+### Domain Migration Guide
+
+The zero-downtime domain migration guide covers 15 steps across 4 phases:
 
 1. **Phase 0: Preparation** - Rollback strategy, DNS backup, monitoring, stakeholder communication
 2. **Phase 1: Partial Setup** - Add zone, configure SSL/TLS, create DNS records, test with /etc/hosts
 3. **Phase 2: Full Setup** - Handle DNSSEC, convert to full setup, update nameservers
 4. **Phase 3: Enable Proxy** - Enable orange cloud, route traffic, IaC/CI-CD setup
+
+### Cloudflare for SaaS Guide
+
+The Cloudflare for SaaS & Custom Hostnames guide covers 14 steps across 3 phases:
+
+#### Phase 1: Test with Dashboard UI
+1. **Enable Cloudflare for SaaS** - Zone setup, plan features, hostname prioritization
+2. **Create Fallback Origin** - Proxied DNS record for default traffic routing
+3. **Create CNAME Target** - Friendly DNS target for customer CNAME records (optional but recommended)
+4. **Create Test Custom Hostname** - SSL settings, certificate authority, validation method
+5. **Complete Domain Validation** - TXT/HTTP validation, Delegated DCV for auto-renewal
+6. **Customer DNS Configuration** - CNAME routing, traffic verification
+
+#### Phase 2: Production with API/Terraform
+7. **API Authentication** - Token creation, Zone ID, environment setup
+8. **Create Fallback Origin via API** - Programmatic fallback origin management
+9. **Create Custom Hostnames via API** - CRUD operations, Terraform resources
+10. **Retrieve Validation Records** - Automated customer notification
+11. **Configure Custom Origins** - Per-hostname origin routing (optional)
+
+#### Phase 3: Verification & Production Readiness
+12. **Verify Custom Hostname Status** - Dashboard, API, and traffic verification
+13. **Production Automation & Monitoring** - Lifecycle management, analytics, Terraform
+14. **Enable Security Features** - WAF for SaaS, rate limiting, custom metadata
 
 ## Quick Start
 
@@ -248,6 +277,9 @@ Steps with only optional checkpoints are automatically excluded from progress ca
 - [Minimize Downtime](https://developers.cloudflare.com/fundamentals/performance/minimize-downtime/)
 - [Partial (CNAME) Setup](https://developers.cloudflare.com/dns/zone-setups/partial-setup/setup/)
 - [Convert Partial to Full Setup](https://developers.cloudflare.com/dns/zone-setups/conversions/convert-partial-to-full/)
+- [Cloudflare for SaaS](https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/)
+- [Custom Hostnames Getting Started](https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/start/getting-started/)
+- [Common API Calls](https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/start/common-api-calls/)
 
 ## Workers Best Practices
 

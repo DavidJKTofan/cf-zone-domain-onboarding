@@ -29,6 +29,12 @@ class MigrationGuide {
                 description: 'This interactive guide helps you safely migrate your domain to Cloudflare with zero downtime. Test configurations before making DNS changes, then transition to full Cloudflare management with confidence.',
                 pageTitle: 'Cloudflare Zero-Downtime Migration Guide'
             },
+            'cloudflare-for-saas': {
+                title: 'Cloudflare for SaaS & Custom Hostnames',
+                subtitle: 'Extend security and performance benefits to your customers via custom domains',
+                description: 'This interactive guide helps you onboard Cloudflare for SaaS, enabling you to extend Cloudflare\'s security and performance benefits to your customers via their own custom or vanity domains.',
+                pageTitle: 'Cloudflare for SaaS & Custom Hostnames Onboarding Guide'
+            },
             'sase-onboarding': {
                 title: 'Cloudflare One SASE & Zero Trust',
                 subtitle: 'Deploy Zero Trust security with ZTNA, SWG, and network connectivity',
@@ -370,8 +376,18 @@ class MigrationGuide {
             return this.getSaseWarning(step.id);
         }
 
+        // Cloudflare for SaaS Guide warnings
+        if (this.guideSlug === 'cloudflare-for-saas') {
+            return this.getSaasWarning(step.id);
+        }
+
         // Zero-Downtime Migration Guide warnings
-        return this.getMigrationWarning(this.currentStepIndex);
+        if (this.guideSlug === 'zero-downtime-migration') {
+            return this.getMigrationWarning(this.currentStepIndex);
+        }
+
+        // Default: no warnings for unknown guides
+        return '';
     }
 
     /**
@@ -465,6 +481,101 @@ class MigrationGuide {
     }
 
     /**
+     * Cloudflare for SaaS guide specific warnings
+     */
+    getSaasWarning(stepId) {
+        const warnings = {
+            'enable-saas': `
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Guide Terminology:</strong> Throughout this guide, we use the following example hostnames:<br>
+                    <code>saas.customer.com</code> = <strong>Custom Hostname</strong> (your customer's vanity domain pointing to your SaaS platform)<br>
+                    <code>*.customers.example.com</code> = <strong>CNAME Target</strong> (wildcard DNS record; customers point to e.g., <code>customer1.customers.example.com</code>)<br>
+                    <code>fallback.example.com</code> = <strong>Fallback Origin</strong> (where Cloudflare routes custom hostname traffic by default)</div>
+                </div>
+            `,
+            'create-fallback-origin': `
+                <div class="alert alert-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div><strong>Important:</strong> The fallback origin must be a proxied (orange cloud) DNS record and cannot be the zone apex (root domain). Use a subdomain like <code>fallback.example.com</code>.</div>
+                </div>
+            `,
+            'create-test-hostname': `
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Orange-to-Orange (O2O):</strong> If your customer also uses Cloudflare for their zone, they can create a <strong>proxied CNAME record</strong> pointing to your CNAME target, enabling O2O. Traffic flows through both zones: customer zone settings apply first, then your SaaS zone settings. O2O requires: (1) zones in different Cloudflare accounts, (2) CNAME-based setup (not apex A records), and (3) an active custom hostname. <a href="https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/saas-customers/how-it-works/" target="_blank" rel="noopener">Learn more about O2O</a></div>
+                </div>
+            `,
+            'complete-validation': `
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Validation Methods:</strong> TXT validation is recommended for pre-validation before DNS cutover. HTTP validation requires the customer's CNAME to already point to your fallback origin. It is highly recommended to set up Delegated DCV for automated certificate renewals.</div>
+                </div>
+            `,
+            'customer-dns-config': `
+                <div class="alert alert-warning">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div><strong>Critical:</strong> Ensure both <strong>Certificate status</strong> and <strong>Hostname status</strong> show <strong>Active</strong> before instructing your customer to update their DNS. Premature DNS changes will result in SSL errors.</div>
+                </div>
+                <div class="alert alert-info" style="margin-top: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Traffic Flow Visualization:</strong>
+                    <div style="font-family: monospace; background: var(--bg-tertiary, #1a1a2e); padding: 1rem; border-radius: 8px; margin-top: 0.5rem; overflow-x: auto;">
+                        <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                            <span style="background: #f97316; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">Visitor</span>
+                            <span style="color: #888;">--&gt;</span>
+                            <span style="background: #3b82f6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">saas.customer.com</span>
+                            <span style="color: #888;">--&gt;</span>
+                            <span style="background: #8b5cf6; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">customer1.customers.example.com</span>
+                            <span style="color: #888;">--&gt;</span>
+                            <span style="background: #10b981; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">fallback.example.com</span>
+                            <span style="color: #888;">--&gt;</span>
+                            <span style="background: #6b7280; color: white; padding: 0.25rem 0.5rem; border-radius: 4px;">Origin Server</span>
+                        </div>
+                        <div style="margin-top: 0.75rem; font-size: 0.85rem; color: #888;">
+                            <div><strong style="color: #3b82f6;">Custom Hostname</strong> (customer's vanity domain) <span style="color: #666;">CNAME to</span></div>
+                            <div><strong style="color: #8b5cf6;">CNAME Target</strong> (matches *.customers.example.com wildcard) <span style="color: #666;">resolves to</span></div>
+                            <div><strong style="color: #10b981;">Fallback Origin</strong> (your proxied DNS record) <span style="color: #666;">routes to</span></div>
+                            <div><strong style="color: #6b7280;">Origin Server</strong> (your backend infrastructure)</div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            `,
+            'custom-metadata': `
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Custom Metadata Best Practices:</strong> Use a flat JSON structure with snake_case keys. Keep schema consistent across all hostnames. Define fallback behavior in Workers for missing metadata. Changes propagate within 30 seconds.</div>
+                </div>
+            `,
+            'verify-hostnames': `
+                <div class="alert alert-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Verification:</strong> A successful custom hostname setup will show the <code>cf-ray</code> header in HTTP responses. Use <code>curl -I https://saas.customer.com</code> to verify traffic is flowing through Cloudflare.</div>
+                </div>
+            `,
+        };
+
+        return warnings[stepId] || '';
+    }
+
+    /**
      * Zero-Downtime Migration guide specific warnings
      */
     getMigrationWarning(stepIndex) {
@@ -538,8 +649,152 @@ class MigrationGuide {
             return this.getSaseCommandExample(step.id);
         }
 
+        // Cloudflare for SaaS Guide command examples
+        if (this.guideSlug === 'cloudflare-for-saas') {
+            return this.getSaasCommandExample(step.id);
+        }
+
         // Zero-Downtime Migration Guide command examples
-        return this.getMigrationCommandExample(this.currentStepIndex);
+        if (this.guideSlug === 'zero-downtime-migration') {
+            return this.getMigrationCommandExample(this.currentStepIndex);
+        }
+
+        // Default: no command examples for unknown guides
+        return '';
+    }
+
+    /**
+     * Cloudflare for SaaS guide specific command examples
+     */
+    getSaasCommandExample(stepId) {
+        const commands = {
+            'api-authentication': `
+                <div class="command-block">
+                    <code># Set up environment variables for API access
+export CLOUDFLARE_API_TOKEN="your-api-token-here"
+export CLOUDFLARE_ZONE_ID="your-zone-id-here"
+
+# Verify API token permissions
+curl -X GET "https://api.cloudflare.com/client/v4/user/tokens/verify" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \\
+    -H "Content-Type: application/json"</code>
+                </div>
+            `,
+            'api-fallback-origin': `
+                <div class="command-block">
+                    <code># Set fallback origin via API
+curl -X PUT "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames/fallback_origin" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \\
+    -H "Content-Type: application/json" \\
+    --data '{"origin":"fallback.example.com"}'
+
+# Get current fallback origin
+curl -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames/fallback_origin" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"</code>
+                </div>
+            `,
+            'api-custom-hostnames': `
+                <div class="command-block">
+                    <code># Create a custom hostname
+curl -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \\
+    -H "Content-Type: application/json" \\
+    --data '{
+        "hostname": "saas.customer.com",
+        "ssl": {
+            "method": "txt",
+            "type": "dv",
+            "settings": {
+                "min_tls_version": "1.2"
+            }
+        }
+    }'
+
+# List all custom hostnames
+curl -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"
+
+# Get specific custom hostname details
+curl -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames/{hostname_id}" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"</code>
+                </div>
+            `,
+            'customer-dns-config': `
+                <div class="command-block">
+                    <code># Verify customer CNAME is pointing to your CNAME target (wildcard subdomain)
+dig +short CNAME saas.customer.com
+# Expected output: customer1.customers.example.com.
+
+# Verify the CNAME target resolves correctly (matches *.customers.example.com)
+dig +short customer1.customers.example.com
+# Expected output: Cloudflare IP addresses (e.g., 104.21.x.x)
+
+# Check if traffic is flowing through Cloudflare
+curl -sI https://saas.customer.com | grep -i "cf-ray"
+# Expected output: cf-ray: xxxxxxxx-XXX (shows Cloudflare PoP)
+
+# Verify SSL certificate is issued correctly
+curl -sI https://saas.customer.com | grep -i "server"
+# Expected output: server: cloudflare</code>
+                </div>
+            `,
+            'verify-hostnames': `
+                <div class="command-block">
+                    <code># Verify custom hostname is working
+curl -I https://saas.customer.com
+
+# Check for cf-ray header (confirms traffic through Cloudflare)
+curl -sI https://saas.customer.com | grep -i "cf-ray"
+
+# Verify SSL certificate
+openssl s_client -connect saas.customer.com:443 -servername saas.customer.com 2>/dev/null | openssl x509 -noout -issuer -dates
+
+# Check hostname status via API
+curl -X GET "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames?hostname=saas.customer.com" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN"</code>
+                </div>
+            `,
+            'custom-origins': `
+                <div class="command-block">
+                    <code># Create custom hostname with custom origin
+curl -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \\
+    -H "Content-Type: application/json" \\
+    --data '{
+        "hostname": "premium.customer.com",
+        "ssl": {
+            "method": "txt",
+            "type": "dv"
+        },
+        "custom_origin_server": "premium-origin.example.com"
+    }'</code>
+                </div>
+            `,
+            'custom-metadata': `
+                <div class="command-block">
+                    <code># Add custom metadata to an existing custom hostname
+curl -X PATCH "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/custom_hostnames/$CUSTOM_HOSTNAME_ID" \\
+    -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \\
+    -H "Content-Type: application/json" \\
+    --data '{
+        "custom_metadata": {
+            "customer_id": "12345",
+            "plan_tier": "premium",
+            "security_tag": "high",
+            "redirect_to_https": true
+        }
+    }'
+
+# Access metadata in Cloudflare Workers:
+# const customerId = request.cf.hostMetadata.customer_id;
+
+# Access metadata in WAF rule expressions:
+# lookup_json_string(cf.hostname.metadata, "security_tag") eq "high"</code>
+                </div>
+            `,
+        };
+
+        return commands[stepId] || '';
     }
 
     /**

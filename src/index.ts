@@ -3,11 +3,13 @@
 import type { MigrationStep } from './types';
 import { GUIDE_CATEGORIES, getGuideBySlug } from './guides';
 import { ZERO_DOWNTIME_MIGRATION_STEPS } from './guides/application-services/zero-downtime-migration';
+import { CLOUDFLARE_FOR_SAAS_STEPS } from './guides/application-services/cloudflare-for-saas';
 import { SASE_ONBOARDING_STEPS } from './guides/cloudflare-one/sase-onboarding';
 
 // Map of guide slugs to their step data
 const GUIDE_STEPS: Record<string, Omit<MigrationStep, 'status'>[]> = {
 	'zero-downtime-migration': ZERO_DOWNTIME_MIGRATION_STEPS,
+	'cloudflare-for-saas': CLOUDFLARE_FOR_SAAS_STEPS,
 	'sase-onboarding': SASE_ONBOARDING_STEPS,
 };
 
