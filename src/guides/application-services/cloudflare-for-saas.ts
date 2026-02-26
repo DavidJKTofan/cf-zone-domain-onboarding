@@ -33,7 +33,7 @@ export const CLOUDFLARE_FOR_SAAS_STEPS: Omit<MigrationStep, 'status'>[] = [
         id: 'create-fallback-origin',
         title: 'Create Fallback Origin',
         description:
-            'The fallback origin is where Cloudflare routes traffic sent to your custom hostnames by default. Create a proxied DNS record (A, AAAA, or CNAME) pointing to the IP address or hostname of your origin server. The fallback origin cannot be the zone apex (root domain).',
+            'The fallback origin is where Cloudflare routes traffic sent to your custom hostnames by default. Create a proxied DNS record (A, AAAA, or CNAME) pointing to the IP address or hostname of your origin server. Alternatively, use a Cloudflare Worker as your fallback origin with an originless DNS record. The fallback origin cannot be the zone apex (root domain).',
         estimatedTime: '10 minutes',
         checkpoints: [
             { id: 'dns-record-created', label: 'Proxied DNS record created for fallback origin (e.g., fallback.example.com)', completed: false, optional: false },
@@ -43,6 +43,7 @@ export const CLOUDFLARE_FOR_SAAS_STEPS: Omit<MigrationStep, 'status'>[] = [
         ],
         documentation: [
             'https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/start/getting-started/#1-create-fallback-origin',
+            'https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/start/advanced-settings/worker-as-origin/',
             'https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/',
             'https://developers.cloudflare.com/dns/proxy-status/',
         ],

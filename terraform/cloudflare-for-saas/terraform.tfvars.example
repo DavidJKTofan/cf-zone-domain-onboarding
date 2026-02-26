@@ -1,0 +1,128 @@
+# Cloudflare for SaaS - Example Variables
+# https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/
+#
+# Copy this file to terraform.tfvars and fill in your values.
+# WARNING: Do not commit terraform.tfvars to version control!
+#
+# Usage:
+#   cp terraform.tfvars.example terraform.tfvars
+#   # Edit terraform.tfvars with your values
+#   terraform init
+#   terraform plan
+#   terraform apply
+
+# =============================================================================
+# Authentication
+# =============================================================================
+
+# API token with "SSL and Certificates Edit" permission
+# Create at: https://dash.cloudflare.com/profile/api-tokens
+# Alternatively, set via environment variable: export CLOUDFLARE_API_TOKEN="..."
+cloudflare_api_token = "your-api-token-here"
+
+# =============================================================================
+# Zone Configuration
+# =============================================================================
+
+# Your Cloudflare Zone ID
+# Find at: Dashboard > Your Domain > Overview (right sidebar)
+zone_id = "023e105f4ecef8ad9ca31a8372d0c353"
+
+# Subdomain for the fallback origin (where traffic is routed)
+# Creates: fallback.example.com
+fallback_subdomain = "fallback"
+
+# IP address or hostname of your actual origin server
+# Examples:
+#   - IPv4: "192.0.2.1"
+#   - IPv6: "2001:db8::1"
+#   - Hostname: "origin.backend.example.com"
+fallback_origin_address = "192.0.2.1"
+
+# Subdomain for the CNAME target (what customers point to)
+# Creates: *.customers.example.com
+cname_target_subdomain = "customers"
+
+# =============================================================================
+# Custom Hostnames
+# =============================================================================
+
+# Define custom hostnames for your customers
+# Each key is a unique identifier (used in Terraform state)
+custom_hostnames = {
+  # Example: Basic customer hostname with TXT validation
+  "acme-corp" = {
+    hostname              = "app.acme-corp.com"
+    ssl_method            = "txt"
+    ssl_type              = "dv"
+    certificate_authority = "google"
+    min_tls_version       = "1.2"
+    wildcard              = false
+    custom_metadata = {
+      customer_id = "cust_001"
+      plan        = "business"
+    }
+  }
+
+  # Example: Customer with wildcard certificate
+  "startup-inc" = {
+    hostname              = "api.startup-inc.io"
+    ssl_method            = "txt"
+    ssl_type              = "dv"
+    certificate_authority = "lets_encrypt"
+    min_tls_version       = "1.2"
+    wildcard              = true
+    custom_metadata = {
+      customer_id = "cust_002"
+      plan        = "enterprise"
+      region      = "us-east"
+    }
+  }
+
+  # Example: Customer with custom origin (dedicated infrastructure)
+  # "enterprise-co" = {
+  #   hostname              = "portal.enterprise-co.com"
+  #   ssl_method            = "txt"
+  #   ssl_type              = "dv"
+  #   certificate_authority = "google"
+  #   min_tls_version       = "1.3"
+  #   wildcard              = false
+  #   custom_origin_server  = "enterprise-origin.example.com"  # Must have DNS record
+  #   custom_metadata = {
+  #     customer_id    = "cust_003"
+  #     plan           = "enterprise-plus"
+  #     security_level = "high"
+  #   }
+  # }
+}
+
+# =============================================================================
+# Default SSL Settings
+# =============================================================================
+
+# Default validation method: txt, http, email
+# Recommendation: Use "txt" for pre-validation before DNS change
+default_ssl_method = "txt"
+
+# Default Certificate Authority: google, lets_encrypt, or "" (default)
+# Google Trust Services and Let's Encrypt are both free
+default_certificate_authority = "google"
+
+# Default minimum TLS version: 1.0, 1.1, 1.2, 1.3
+# Recommendation: Use "1.2" for balance of compatibility and security
+default_min_tls_version = "1.2"
+
+# =============================================================================
+# Advanced Settings
+# =============================================================================
+
+# Create the wildcard CNAME target DNS record
+# Set to false if you want to manage DNS separately
+enable_cname_target_dns = true
+
+# Optional tags for organization
+tags = {
+  environment = "production"
+  team        = "platform"
+  managed_by  = "terraform"
+}

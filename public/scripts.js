@@ -503,6 +503,12 @@ class MigrationGuide {
                     </svg>
                     <div><strong>Important:</strong> The fallback origin must be a proxied (orange cloud) DNS record and cannot be the zone apex (root domain). Use a subdomain like <code>fallback.example.com</code>.</div>
                 </div>
+                <div class="alert alert-info" style="margin-top: 1rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div><strong>Workers as Fallback Origin:</strong> You can use a Cloudflare Worker as your fallback origin instead of a traditional server. Create an originless DNS record (e.g., <code>AAAA 100::</code>), then configure a Worker route (<code>*/*</code>) to capture all traffic including custom hostname requests. The Worker can access the custom hostname via <code>request.headers.get('host')</code>. <a href="https://developers.cloudflare.com/cloudflare-for-platforms/cloudflare-for-saas/start/advanced-settings/worker-as-origin/" target="_blank" rel="noopener">Learn more</a></div>
+                </div>
             `,
             'create-test-hostname': `
                 <div class="alert alert-info">
